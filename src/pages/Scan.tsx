@@ -1,18 +1,21 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileJson, Scan as ScanIcon, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Upload, FileJson, Scan as ScanIcon, AlertCircle, CheckCircle, Loader2, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-type ScanStatus = 'idle' | 'validating' | 'scanning' | 'completed' | 'error';
+import { useScan } from "@/hooks/useScan";
 
 export default function Scan() {
   const [packageJsonContent, setPackageJsonContent] = useState("");
-  const [status, setStatus] = useState<ScanStatus>('idle');
+  const [lockfileContent, setLockfileContent] = useState("");
   const [parseError, setParseError] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { scanProgress, startScan, resetScan } = useScan();
 
   const validatePackageJson = (content: string): boolean => {
     try {
@@ -23,7 +26,7 @@ export default function Scan() {
       }
       setParseError(null);
       return true;
-    } catch (e) {
+    } catch {
       setParseError("Invalid JSON format");
       return false;
     }
@@ -42,18 +45,27 @@ export default function Scan() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.name.endsWith('.json')) {
+    const content = await file.text();
+    
+    if (file.name === 'package-lock.json') {
+      setLockfileContent(content);
+      toast({
+        title: "Lockfile uploaded",
+        description: "package-lock.json will be used for transitive dependency analysis",
+      });
+      return;
+    }
+
+    if (file.name.endsWith('.json')) {
+      setPackageJsonContent(content);
+      validatePackageJson(content);
+    } else {
       toast({
         title: "Invalid file type",
         description: "Please upload a valid package.json file",
         variant: "destructive",
       });
-      return;
     }
-
-    const content = await file.text();
-    setPackageJsonContent(content);
-    validatePackageJson(content);
   };
 
   const handleStartScan = async () => {
@@ -70,17 +82,15 @@ export default function Scan() {
       return;
     }
 
-    setStatus('scanning');
+    const result = await startScan(packageJsonContent, lockfileContent || undefined);
     
-    // TODO: Implement actual scanning logic with edge function
-    // For now, simulate a scan
-    setTimeout(() => {
-      setStatus('completed');
+    if (result) {
       toast({
         title: "Scan completed",
-        description: "Your project has been analyzed successfully",
+        description: `Found ${result.summary.criticalVulnerabilities + result.summary.highVulnerabilities} critical/high vulnerabilities`,
       });
-    }, 3000);
+      navigate(`/vulnerabilities?scanId=${result.id}`);
+    }
   };
 
   const getDependencyCount = (): { deps: number; devDeps: number } | null => {
@@ -96,6 +106,7 @@ export default function Scan() {
   };
 
   const counts = packageJsonContent ? getDependencyCount() : null;
+  const isScanning = scanProgress.status === 'scanning' || scanProgress.status === 'parsing';
 
   return (
     <div className="space-y-6">
@@ -129,7 +140,7 @@ export default function Scan() {
                     accept=".json"
                     onChange={handleFileUpload}
                     className="hidden"
-                    disabled={status === 'scanning'}
+                    disabled={isScanning}
                   />
                   <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background/50 p-4 transition-all hover:border-primary hover:bg-background">
                     <Upload className="h-5 w-5 text-muted-foreground" />
@@ -138,7 +149,29 @@ export default function Scan() {
                     </span>
                   </div>
                 </label>
+                <label className="flex-1">
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    disabled={isScanning}
+                  />
+                  <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background/50 p-4 transition-all hover:border-primary hover:bg-background">
+                    <Lock className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      Upload lockfile (optional)
+                    </span>
+                  </div>
+                </label>
               </div>
+
+              {lockfileContent && (
+                <div className="flex items-center gap-2 rounded-lg bg-primary/10 p-2 text-sm text-primary">
+                  <CheckCircle className="h-4 w-4" />
+                  Lockfile attached - transitive dependencies will be analyzed
+                </div>
+              )}
 
               <div className="relative flex items-center">
                 <div className="flex-1 border-t border-border" />
@@ -159,7 +192,7 @@ export default function Scan() {
                 value={packageJsonContent}
                 onChange={(e) => handleContentChange(e.target.value)}
                 className="min-h-[300px] font-mono text-sm bg-background/50"
-                disabled={status === 'scanning'}
+                disabled={isScanning}
               />
 
               {/* Validation feedback */}
@@ -179,14 +212,44 @@ export default function Scan() {
             </CardContent>
           </Card>
 
+          {/* Progress section */}
+          {isScanning && (
+            <Card className="bg-gradient-card border-primary/30">
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">{scanProgress.message}</span>
+                    <span className="font-mono text-primary">{scanProgress.progress}%</span>
+                  </div>
+                  <Progress value={scanProgress.progress} className="h-2" />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Error display */}
+          {scanProgress.status === 'failed' && (
+            <Card className="bg-danger/10 border-danger/30">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 text-danger">
+                  <AlertCircle className="h-5 w-5" />
+                  <span>{scanProgress.message}</span>
+                </div>
+                <Button variant="outline" className="mt-4" onClick={resetScan}>
+                  Try Again
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Scan button */}
           <Button
             onClick={handleStartScan}
             className="w-full glow-primary gap-2"
             size="lg"
-            disabled={!packageJsonContent.trim() || !!parseError || status === 'scanning'}
+            disabled={!packageJsonContent.trim() || !!parseError || isScanning}
           >
-            {status === 'scanning' ? (
+            {isScanning ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Scanning...

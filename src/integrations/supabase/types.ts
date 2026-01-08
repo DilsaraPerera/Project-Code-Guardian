@@ -14,7 +14,284 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      dependencies: {
+        Row: {
+          created_at: string
+          dependency_count: number | null
+          dependency_path: string[] | null
+          deprecated: string | null
+          depth: number | null
+          description: string | null
+          dev_dependency_count: number | null
+          has_install_scripts: boolean | null
+          homepage: string | null
+          id: string
+          is_dev_dependency: boolean | null
+          is_direct_dependency: boolean | null
+          last_published: string | null
+          license: string | null
+          name: string
+          repository: string | null
+          risk_level: Database["public"]["Enums"]["severity_level"] | null
+          risk_score: number | null
+          scan_id: string
+          version: string
+          weekly_downloads: number | null
+        }
+        Insert: {
+          created_at?: string
+          dependency_count?: number | null
+          dependency_path?: string[] | null
+          deprecated?: string | null
+          depth?: number | null
+          description?: string | null
+          dev_dependency_count?: number | null
+          has_install_scripts?: boolean | null
+          homepage?: string | null
+          id?: string
+          is_dev_dependency?: boolean | null
+          is_direct_dependency?: boolean | null
+          last_published?: string | null
+          license?: string | null
+          name: string
+          repository?: string | null
+          risk_level?: Database["public"]["Enums"]["severity_level"] | null
+          risk_score?: number | null
+          scan_id: string
+          version: string
+          weekly_downloads?: number | null
+        }
+        Update: {
+          created_at?: string
+          dependency_count?: number | null
+          dependency_path?: string[] | null
+          deprecated?: string | null
+          depth?: number | null
+          description?: string | null
+          dev_dependency_count?: number | null
+          has_install_scripts?: boolean | null
+          homepage?: string | null
+          id?: string
+          is_dev_dependency?: boolean | null
+          is_direct_dependency?: boolean | null
+          last_published?: string | null
+          license?: string | null
+          name?: string
+          repository?: string | null
+          risk_level?: Database["public"]["Enums"]["severity_level"] | null
+          risk_score?: number | null
+          scan_id?: string
+          version?: string
+          weekly_downloads?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dependencies_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintainers: {
+        Row: {
+          created_at: string
+          dependency_id: string
+          email: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          dependency_id: string
+          email?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          dependency_id?: string
+          email?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintainers_dependency_id_fkey"
+            columns: ["dependency_id"]
+            isOneToOne: false
+            referencedRelation: "dependencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scans: {
+        Row: {
+          created_at: string
+          critical_vulnerabilities: number
+          direct_dependencies: number
+          high_vulnerabilities: number
+          id: string
+          lockfile_content: string | null
+          low_vulnerabilities: number
+          medium_vulnerabilities: number
+          overall_risk_grade: Database["public"]["Enums"]["risk_grade"]
+          overall_risk_score: number
+          package_json: string
+          progress: number
+          project_name: string
+          scanned_packages: number
+          status: Database["public"]["Enums"]["scan_status"]
+          total_dependencies: number
+          total_packages: number
+          transitive_dependencies: number
+          updated_at: string
+          weak_link_signals: number
+        }
+        Insert: {
+          created_at?: string
+          critical_vulnerabilities?: number
+          direct_dependencies?: number
+          high_vulnerabilities?: number
+          id?: string
+          lockfile_content?: string | null
+          low_vulnerabilities?: number
+          medium_vulnerabilities?: number
+          overall_risk_grade?: Database["public"]["Enums"]["risk_grade"]
+          overall_risk_score?: number
+          package_json: string
+          progress?: number
+          project_name: string
+          scanned_packages?: number
+          status?: Database["public"]["Enums"]["scan_status"]
+          total_dependencies?: number
+          total_packages?: number
+          transitive_dependencies?: number
+          updated_at?: string
+          weak_link_signals?: number
+        }
+        Update: {
+          created_at?: string
+          critical_vulnerabilities?: number
+          direct_dependencies?: number
+          high_vulnerabilities?: number
+          id?: string
+          lockfile_content?: string | null
+          low_vulnerabilities?: number
+          medium_vulnerabilities?: number
+          overall_risk_grade?: Database["public"]["Enums"]["risk_grade"]
+          overall_risk_score?: number
+          package_json?: string
+          progress?: number
+          project_name?: string
+          scanned_packages?: number
+          status?: Database["public"]["Enums"]["scan_status"]
+          total_dependencies?: number
+          total_packages?: number
+          transitive_dependencies?: number
+          updated_at?: string
+          weak_link_signals?: number
+        }
+        Relationships: []
+      }
+      vulnerabilities: {
+        Row: {
+          affected_versions: string | null
+          created_at: string
+          cvss_score: number | null
+          cwe_ids: string[] | null
+          dependency_id: string
+          description: string | null
+          id: string
+          patched_versions: string | null
+          published_date: string | null
+          reference_urls: string[] | null
+          severity: Database["public"]["Enums"]["severity_level"]
+          source: string
+          source_id: string
+          title: string
+        }
+        Insert: {
+          affected_versions?: string | null
+          created_at?: string
+          cvss_score?: number | null
+          cwe_ids?: string[] | null
+          dependency_id: string
+          description?: string | null
+          id?: string
+          patched_versions?: string | null
+          published_date?: string | null
+          reference_urls?: string[] | null
+          severity: Database["public"]["Enums"]["severity_level"]
+          source: string
+          source_id: string
+          title: string
+        }
+        Update: {
+          affected_versions?: string | null
+          created_at?: string
+          cvss_score?: number | null
+          cwe_ids?: string[] | null
+          dependency_id?: string
+          description?: string | null
+          id?: string
+          patched_versions?: string | null
+          published_date?: string | null
+          reference_urls?: string[] | null
+          severity?: Database["public"]["Enums"]["severity_level"]
+          source?: string
+          source_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vulnerabilities_dependency_id_fkey"
+            columns: ["dependency_id"]
+            isOneToOne: false
+            referencedRelation: "dependencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weak_links: {
+        Row: {
+          created_at: string
+          dependency_id: string
+          details: string | null
+          id: string
+          message: string
+          severity: Database["public"]["Enums"]["severity_level"]
+          signal_type: string
+        }
+        Insert: {
+          created_at?: string
+          dependency_id: string
+          details?: string | null
+          id?: string
+          message: string
+          severity: Database["public"]["Enums"]["severity_level"]
+          signal_type: string
+        }
+        Update: {
+          created_at?: string
+          dependency_id?: string
+          details?: string | null
+          id?: string
+          message?: string
+          severity?: Database["public"]["Enums"]["severity_level"]
+          signal_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weak_links_dependency_id_fkey"
+            columns: ["dependency_id"]
+            isOneToOne: false
+            referencedRelation: "dependencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +300,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      risk_grade: "A" | "B" | "C" | "D" | "F"
+      scan_status: "pending" | "scanning" | "completed" | "failed"
+      severity_level: "critical" | "high" | "medium" | "low" | "info"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +429,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      risk_grade: ["A", "B", "C", "D", "F"],
+      scan_status: ["pending", "scanning", "completed", "failed"],
+      severity_level: ["critical", "high", "medium", "low", "info"],
+    },
   },
 } as const

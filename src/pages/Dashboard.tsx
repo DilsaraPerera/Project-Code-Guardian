@@ -6,61 +6,52 @@ import { VulnerabilityStats } from "@/components/dashboard/VulnerabilityStats";
 import { DependencyOverview } from "@/components/dashboard/DependencyOverview";
 import { RecentScans } from "@/components/dashboard/RecentScans";
 import { WeakLinkSummary } from "@/components/dashboard/WeakLinkSummary";
-
-// Mock data - will be replaced with real data from backend
-const mockScanData = {
-  grade: 'B' as const,
-  score: 78,
-  vulnerabilities: {
-    critical: 1,
-    high: 3,
-    medium: 8,
-    low: 12,
-  },
-  dependencies: {
-    total: 247,
-    direct: 23,
-    transitive: 224,
-    withIssues: 14,
-  },
-  weakLinks: {
-    installScripts: 2,
-    maintainerInactive: 5,
-    deprecated: 1,
-    typosquatting: 0,
-    singleMaintainer: 8,
-    lowDownloads: 3,
-  },
-  recentScans: [
-    {
-      id: '1',
-      projectName: 'my-react-app',
-      timestamp: new Date(Date.now() - 3600000).toISOString(),
-      status: 'completed' as const,
-      grade: 'B' as const,
-      vulnerabilities: 24,
-    },
-    {
-      id: '2',
-      projectName: 'backend-api',
-      timestamp: new Date(Date.now() - 86400000).toISOString(),
-      status: 'completed' as const,
-      grade: 'A' as const,
-      vulnerabilities: 2,
-    },
-    {
-      id: '3',
-      projectName: 'legacy-app',
-      timestamp: new Date(Date.now() - 172800000).toISOString(),
-      status: 'completed' as const,
-      grade: 'D' as const,
-      vulnerabilities: 47,
-    },
-  ],
-};
+import { useScans } from "@/hooks/useScans";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
-  const hasScans = mockScanData.recentScans.length > 0;
+  const { data: scans, isLoading } = useScans(5);
+  
+  // Get the most recent completed scan for stats
+  const latestScan = scans?.find(s => s.status === 'completed');
+  const hasScans = scans && scans.length > 0;
+
+  // Transform scans data for RecentScans component
+  const recentScans = scans?.map(scan => ({
+    id: scan.id,
+    projectName: scan.projectName,
+    timestamp: scan.createdAt,
+    status: scan.status,
+    grade: scan.status === 'completed' ? scan.overallRiskGrade : undefined,
+    vulnerabilities: scan.criticalVulnerabilities + scan.highVulnerabilities + 
+                     scan.mediumVulnerabilities + scan.lowVulnerabilities,
+  })) || [];
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Security Dashboard</h1>
+            <p className="text-sm text-muted-foreground">
+              Monitor your supply chain security posture
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Skeleton className="h-48" />
+              <Skeleton className="h-48" />
+            </div>
+            <Skeleton className="h-32" />
+            <Skeleton className="h-48" />
+          </div>
+          <Skeleton className="h-80" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -108,39 +99,39 @@ export default function Dashboard() {
             {/* Top row - Score and Vulnerabilities */}
             <div className="grid gap-6 sm:grid-cols-2">
               <SecurityScoreCard
-                grade={mockScanData.grade}
-                score={mockScanData.score}
+                grade={latestScan?.overallRiskGrade || 'A'}
+                score={Math.round(100 - (latestScan?.overallRiskScore || 0))}
               />
               <VulnerabilityStats
-                critical={mockScanData.vulnerabilities.critical}
-                high={mockScanData.vulnerabilities.high}
-                medium={mockScanData.vulnerabilities.medium}
-                low={mockScanData.vulnerabilities.low}
+                critical={latestScan?.criticalVulnerabilities || 0}
+                high={latestScan?.highVulnerabilities || 0}
+                medium={latestScan?.mediumVulnerabilities || 0}
+                low={latestScan?.lowVulnerabilities || 0}
               />
             </div>
 
             {/* Dependencies overview */}
             <DependencyOverview
-              total={mockScanData.dependencies.total}
-              direct={mockScanData.dependencies.direct}
-              transitive={mockScanData.dependencies.transitive}
-              withIssues={mockScanData.dependencies.withIssues}
+              total={latestScan?.totalDependencies || 0}
+              direct={0}
+              transitive={0}
+              withIssues={latestScan?.weakLinkSignals || 0}
             />
 
             {/* Weak-link summary */}
             <WeakLinkSummary
-              installScripts={mockScanData.weakLinks.installScripts}
-              maintainerInactive={mockScanData.weakLinks.maintainerInactive}
-              deprecated={mockScanData.weakLinks.deprecated}
-              typosquatting={mockScanData.weakLinks.typosquatting}
-              singleMaintainer={mockScanData.weakLinks.singleMaintainer}
-              lowDownloads={mockScanData.weakLinks.lowDownloads}
+              installScripts={0}
+              maintainerInactive={0}
+              deprecated={0}
+              typosquatting={0}
+              singleMaintainer={0}
+              lowDownloads={latestScan?.weakLinkSignals || 0}
             />
           </div>
 
           {/* Right column - Recent scans */}
           <div className="lg:col-span-1">
-            <RecentScans scans={mockScanData.recentScans} />
+            <RecentScans scans={recentScans} />
           </div>
         </div>
       )}
