@@ -8,7 +8,7 @@ interface Scan {
   id: string;
   projectName: string;
   timestamp: string;
-  status: 'completed' | 'failed' | 'scanning';
+  status: 'completed' | 'failed' | 'scanning' | 'pending';
   grade?: 'A' | 'B' | 'C' | 'D' | 'F';
   vulnerabilities?: number;
 }
@@ -78,7 +78,7 @@ export function RecentScans({ scans }: RecentScansProps) {
                   {scan.status === 'failed' && (
                     <XCircle className="h-4 w-4 text-danger" />
                   )}
-                  {scan.status === 'scanning' && (
+                  {(scan.status === 'scanning' || scan.status === 'pending') && (
                     <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   )}
                   <div>
