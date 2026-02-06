@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Search, 
-  Filter, 
-  ShieldAlert, 
-  AlertTriangle, 
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
+import {
+  Search,
+  Filter,
+  ShieldAlert,
+  AlertTriangle,
   AlertCircle,
   Info,
   ExternalLink,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Shield,
+  Scan,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,71 +25,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useScans } from "@/hooks/useScans";
+import { useVulnerabilities } from "@/hooks/useVulnerabilities";
 import type { SeverityLevel } from "@/types/security";
-
-// Mock data
-const mockVulnerabilities = [
-  {
-    id: "GHSA-4q6p-r6v2-jvc5",
-    source: "github" as const,
-    severity: "critical" as SeverityLevel,
-    title: "Prototype Pollution in minimist",
-    description: "Affected versions of minimist are vulnerable to prototype pollution. An attacker can inject properties onto Object.prototype.",
-    package: "minimist",
-    affectedVersions: "<1.2.6",
-    patchedVersions: ">=1.2.6",
-    cvssScore: 9.8,
-    cweIds: ["CWE-1321"],
-    publishedDate: "2022-03-21",
-    references: ["https://github.com/advisories/GHSA-4q6p-r6v2-jvc5"],
-  },
-  {
-    id: "CVE-2021-3749",
-    source: "osv" as const,
-    severity: "high" as SeverityLevel,
-    title: "Regular Expression Denial of Service in axios",
-    description: "axios before 0.21.2 allows server-side request forgery. An attacker can use this vulnerability to make requests to internal resources.",
-    package: "axios",
-    affectedVersions: "<0.21.2",
-    patchedVersions: ">=0.21.2",
-    cvssScore: 7.5,
-    cweIds: ["CWE-918"],
-    publishedDate: "2021-08-31",
-    references: ["https://nvd.nist.gov/vuln/detail/CVE-2021-3749"],
-  },
-  {
-    id: "CVE-2022-0155",
-    source: "npm" as const,
-    severity: "medium" as SeverityLevel,
-    title: "Exposure of Sensitive Information in axios",
-    description: "follow-redirects is vulnerable to Exposure of Private Personal Information to an Unauthorized Actor.",
-    package: "axios",
-    affectedVersions: "<0.21.4",
-    patchedVersions: ">=0.21.4",
-    cvssScore: 6.5,
-    cweIds: ["CWE-359"],
-    publishedDate: "2022-02-09",
-    references: ["https://nvd.nist.gov/vuln/detail/CVE-2022-0155"],
-  },
-  {
-    id: "GHSA-35jh-r3h4-6jhm",
-    source: "github" as const,
-    severity: "high" as SeverityLevel,
-    title: "Uncontrolled Resource Consumption in node-fetch",
-    description: "node-fetch before 2.6.7 and 3.x before 3.1.1 is vulnerable to uncontrolled resource consumption.",
-    package: "node-fetch",
-    affectedVersions: "<2.6.7",
-    patchedVersions: ">=2.6.7",
-    cvssScore: 7.5,
-    cweIds: ["CWE-400"],
-    publishedDate: "2022-01-14",
-    references: ["https://github.com/advisories/GHSA-35jh-r3h4-6jhm"],
-  },
-];
 
 const severityConfig = {
   critical: {
@@ -93,117 +46,214 @@ const severityConfig = {
     color: "text-severity-critical",
     bgColor: "bg-severity-critical/10",
     borderColor: "border-severity-critical/30",
+    label: "Critical",
   },
   high: {
     icon: AlertTriangle,
     color: "text-severity-high",
     bgColor: "bg-severity-high/10",
     borderColor: "border-severity-high/30",
+    label: "High",
   },
   medium: {
     icon: AlertCircle,
     color: "text-severity-medium",
     bgColor: "bg-severity-medium/10",
     borderColor: "border-severity-medium/30",
+    label: "Medium",
   },
   low: {
     icon: Info,
     color: "text-severity-low",
     bgColor: "bg-severity-low/10",
     borderColor: "border-severity-low/30",
+    label: "Low",
   },
   info: {
     icon: Info,
     color: "text-severity-info",
     bgColor: "bg-severity-info/10",
     borderColor: "border-severity-info/30",
+    label: "Info",
   },
 };
 
-type FilterSeverity = 'all' | SeverityLevel;
+type FilterSeverity = "all" | SeverityLevel;
 
 export default function Vulnerabilities() {
+  const { data: scans, isLoading: scansLoading } = useScans();
+  const completedScans = scans?.filter((s) => s.status === "completed") || [];
+
+  const [selectedScanId, setSelectedScanId] = useState<string | undefined>();
   const [searchQuery, setSearchQuery] = useState("");
-  const [severityFilter, setSeverityFilter] = useState<FilterSeverity>('all');
+  const [severityFilter, setSeverityFilter] = useState<FilterSeverity>("all");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
-  const filteredVulnerabilities = mockVulnerabilities.filter((vuln) => {
-    const matchesSearch = 
-      vuln.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vuln.package.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vuln.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesSeverity = severityFilter === 'all' || vuln.severity === severityFilter;
-    
-    return matchesSearch && matchesSeverity;
-  });
+  // Auto-select latest completed scan
+  useEffect(() => {
+    if (!selectedScanId && completedScans.length > 0) {
+      setSelectedScanId(completedScans[0].id);
+    }
+  }, [completedScans, selectedScanId]);
+
+  const { data: vulnerabilities, isLoading: vulnLoading } =
+    useVulnerabilities(selectedScanId);
+
+  const filteredVulnerabilities = useMemo(() => {
+    if (!vulnerabilities) return [];
+    return vulnerabilities.filter((vuln) => {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch =
+        !q ||
+        vuln.title.toLowerCase().includes(q) ||
+        vuln.packageName.toLowerCase().includes(q) ||
+        vuln.sourceId.toLowerCase().includes(q) ||
+        (vuln.description || "").toLowerCase().includes(q);
+      const matchesSeverity =
+        severityFilter === "all" || vuln.severity === severityFilter;
+      return matchesSearch && matchesSeverity;
+    });
+  }, [vulnerabilities, searchQuery, severityFilter]);
+
+  const counts = useMemo(() => {
+    if (!vulnerabilities) return { critical: 0, high: 0, medium: 0, low: 0 };
+    return {
+      critical: vulnerabilities.filter((v) => v.severity === "critical").length,
+      high: vulnerabilities.filter((v) => v.severity === "high").length,
+      medium: vulnerabilities.filter((v) => v.severity === "medium").length,
+      low: vulnerabilities.filter((v) => v.severity === "low").length,
+    };
+  }, [vulnerabilities]);
 
   const toggleExpand = (id: string) => {
-    const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(id)) {
-      newExpanded.delete(id);
-    } else {
-      newExpanded.add(id);
-    }
-    setExpandedItems(newExpanded);
+    setExpandedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
-  const counts = {
-    critical: mockVulnerabilities.filter(v => v.severity === 'critical').length,
-    high: mockVulnerabilities.filter(v => v.severity === 'high').length,
-    medium: mockVulnerabilities.filter(v => v.severity === 'medium').length,
-    low: mockVulnerabilities.filter(v => v.severity === 'low').length,
-  };
+  const isLoading = scansLoading || vulnLoading;
+
+  // Empty state: no completed scans at all
+  if (!scansLoading && completedScans.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Vulnerabilities</h1>
+          <p className="text-sm text-muted-foreground">
+            Security vulnerabilities detected in your dependencies
+          </p>
+        </div>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+            <Shield className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="text-xl font-semibold text-foreground mb-2">
+            No scans yet
+          </h2>
+          <p className="text-center text-muted-foreground mb-6 max-w-md">
+            Run a scan to detect vulnerabilities in your project dependencies.
+          </p>
+          <Link to="/scan">
+            <Button className="glow-primary gap-2">
+              <Scan className="h-4 w-4" />
+              Start a Scan
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Vulnerabilities</h1>
-        <p className="text-sm text-muted-foreground">
-          Security vulnerabilities detected in your dependencies
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Vulnerabilities</h1>
+          <p className="text-sm text-muted-foreground">
+            Security vulnerabilities detected in your dependencies
+          </p>
+        </div>
+        {completedScans.length > 0 && (
+          <Select value={selectedScanId} onValueChange={setSelectedScanId}>
+            <SelectTrigger className="w-[220px]">
+              <SelectValue placeholder="Select scan" />
+            </SelectTrigger>
+            <SelectContent>
+              {completedScans.map((scan) => (
+                <SelectItem key={scan.id} value={scan.id}>
+                  {scan.projectName} — {scan.overallRiskGrade}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       {/* Summary cards */}
-      <div className="grid gap-4 sm:grid-cols-4">
-        {(Object.entries(counts) as [SeverityLevel, number][]).map(([severity, count]) => {
-          const config = severityConfig[severity];
-          const Icon = config.icon;
-          return (
-            <Card 
-              key={severity}
-              className={`bg-gradient-card border-border/50 cursor-pointer transition-all hover:border-primary/30 ${severityFilter === severity ? 'ring-1 ring-primary' : ''}`}
-              onClick={() => setSeverityFilter(severityFilter === severity ? 'all' : severity)}
-            >
-              <CardContent className="pt-4">
-                <div className="flex items-center gap-3">
-                  <div className={`rounded-lg ${config.bgColor} p-2`}>
-                    <Icon className={`h-5 w-5 ${config.color}`} />
+      {isLoading ? (
+        <div className="grid gap-4 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-20" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-4">
+          {(
+            Object.entries(counts) as [SeverityLevel, number][]
+          ).map(([severity, count]) => {
+            const config = severityConfig[severity];
+            const Icon = config.icon;
+            return (
+              <Card
+                key={severity}
+                className={`bg-gradient-card border-border/50 cursor-pointer transition-all hover:border-primary/30 ${
+                  severityFilter === severity ? "ring-1 ring-primary" : ""
+                }`}
+                onClick={() =>
+                  setSeverityFilter(
+                    severityFilter === severity ? "all" : severity
+                  )
+                }
+              >
+                <CardContent className="pt-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`rounded-lg ${config.bgColor} p-2`}>
+                      <Icon className={`h-5 w-5 ${config.color}`} />
+                    </div>
+                    <div>
+                      <p className={`text-2xl font-bold ${config.color}`}>
+                        {count}
+                      </p>
+                      <p className="text-xs text-muted-foreground capitalize">
+                        {severity}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className={`text-2xl font-bold ${config.color}`}>{count}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{severity}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       {/* Filters and list */}
       <Card className="bg-gradient-card border-border/50">
         <CardHeader className="pb-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-lg font-medium">
-              {filteredVulnerabilities.length} Vulnerabilities Found
+              {isLoading
+                ? "Loading…"
+                : `${filteredVulnerabilities.length} Vulnerabilities Found`}
             </CardTitle>
             <div className="flex gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search vulnerabilities..."
+                  placeholder="Search by CVE, package, title…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-64 pl-9 bg-background/50"
@@ -213,24 +263,28 @@ export default function Vulnerabilities() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="gap-2">
                     <Filter className="h-4 w-4" />
-                    {severityFilter === 'all' ? 'All Severities' : severityFilter}
+                    {severityFilter === "all"
+                      ? "All Severities"
+                      : severityConfig[severityFilter]?.label || severityFilter}
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setSeverityFilter('all')}>
+                  <DropdownMenuItem onClick={() => setSeverityFilter("all")}>
                     All Severities
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSeverityFilter('critical')}>
+                  <DropdownMenuItem
+                    onClick={() => setSeverityFilter("critical")}
+                  >
                     Critical
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSeverityFilter('high')}>
+                  <DropdownMenuItem onClick={() => setSeverityFilter("high")}>
                     High
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSeverityFilter('medium')}>
+                  <DropdownMenuItem onClick={() => setSeverityFilter("medium")}>
                     Medium
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSeverityFilter('low')}>
+                  <DropdownMenuItem onClick={() => setSeverityFilter("low")}>
                     Low
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -239,101 +293,223 @@ export default function Vulnerabilities() {
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          {filteredVulnerabilities.map((vuln) => {
-            const config = severityConfig[vuln.severity];
-            const Icon = config.icon;
-            const isExpanded = expandedItems.has(vuln.id);
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-20 rounded-lg" />
+              ))}
+            </div>
+          ) : filteredVulnerabilities.length === 0 ? (
+            <div className="py-12 text-center">
+              <ShieldAlert className="mx-auto h-12 w-12 text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">
+                {vulnerabilities && vulnerabilities.length > 0
+                  ? "No vulnerabilities match your filters"
+                  : "No vulnerabilities found in this scan — your dependencies look clean!"}
+              </p>
+            </div>
+          ) : (
+            filteredVulnerabilities.map((vuln) => {
+              const config = severityConfig[vuln.severity] || severityConfig.info;
+              const Icon = config.icon;
+              const isExpanded = expandedItems.has(vuln.id);
 
-            return (
-              <Collapsible
-                key={vuln.id}
-                open={isExpanded}
-                onOpenChange={() => toggleExpand(vuln.id)}
-              >
-                <div className={`rounded-lg border ${config.borderColor} ${config.bgColor} transition-all`}>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between p-4 text-left">
-                    <div className="flex items-center gap-4">
-                      <Icon className={`h-5 w-5 ${config.color}`} />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-foreground">{vuln.title}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {vuln.source.toUpperCase()}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <span className="font-mono">{vuln.id}</span>
-                          <span>•</span>
-                          <span>Affects: {vuln.package}</span>
-                          {vuln.cvssScore && (
-                            <>
-                              <span>•</span>
-                              <span>CVSS: {vuln.cvssScore}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className={`${config.bgColor} ${config.color} ${config.borderColor}`}>
-                        {vuln.severity}
-                      </Badge>
-                      {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </div>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="border-t border-border/50 p-4 space-y-4">
-                      <p className="text-sm text-muted-foreground">{vuln.description}</p>
-                      
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-1">Affected Versions</p>
-                          <code className="text-sm text-foreground">{vuln.affectedVersions}</code>
-                        </div>
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-1">Patched Versions</p>
-                          <code className="text-sm text-success">{vuln.patchedVersions}</code>
-                        </div>
-                      </div>
-
-                      {vuln.cweIds && vuln.cweIds.length > 0 && (
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-1">CWE IDs</p>
-                          <div className="flex gap-1">
-                            {vuln.cweIds.map((cwe) => (
-                              <Badge key={cwe} variant="outline" className="text-xs">
-                                {cwe}
-                              </Badge>
-                            ))}
+              return (
+                <Collapsible
+                  key={vuln.id}
+                  open={isExpanded}
+                  onOpenChange={() => toggleExpand(vuln.id)}
+                >
+                  <div
+                    className={`rounded-lg border ${config.borderColor} ${config.bgColor} transition-all`}
+                  >
+                    <CollapsibleTrigger className="flex w-full items-center justify-between p-4 text-left">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <Icon
+                          className={`h-5 w-5 shrink-0 ${config.color}`}
+                        />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-medium text-foreground truncate">
+                              {vuln.title}
+                            </span>
+                            <Badge
+                              variant="outline"
+                              className="text-xs shrink-0"
+                            >
+                              {vuln.source.toUpperCase()}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
+                            <span className="font-mono text-xs">
+                              {vuln.sourceId}
+                            </span>
+                            <span>•</span>
+                            <span>
+                              {vuln.packageName}@{vuln.packageVersion}
+                            </span>
+                            {vuln.cvssScore != null && (
+                              <>
+                                <span>•</span>
+                                <span className="font-semibold">
+                                  CVSS {vuln.cvssScore.toFixed(1)}
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
-                      )}
-
-                      <div className="flex gap-2">
-                        {vuln.references.map((ref, i) => (
-                          <Button key={i} variant="outline" size="sm" asChild>
-                            <a href={ref} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="mr-1 h-3 w-3" />
-                              View Advisory
-                            </a>
-                          </Button>
-                        ))}
                       </div>
-                    </div>
-                  </CollapsibleContent>
-                </div>
-              </Collapsible>
-            );
-          })}
+                      <div className="flex items-center gap-2 shrink-0 ml-2">
+                        <Badge
+                          variant="outline"
+                          className={`${config.bgColor} ${config.color} ${config.borderColor}`}
+                        >
+                          {vuln.severity}
+                        </Badge>
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </div>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="border-t border-border/50 p-4 space-y-4">
+                        {vuln.description && (
+                          <p className="text-sm text-muted-foreground">
+                            {vuln.description}
+                          </p>
+                        )}
 
-          {filteredVulnerabilities.length === 0 && (
-            <div className="py-8 text-center text-muted-foreground">
-              No vulnerabilities found matching your criteria
-            </div>
+                        <div className="grid gap-4 sm:grid-cols-3">
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Affected Versions
+                            </p>
+                            <code className="text-sm text-foreground">
+                              {vuln.affectedVersions || "N/A"}
+                            </code>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Patched Versions
+                            </p>
+                            <code className="text-sm text-success">
+                              {vuln.patchedVersions || "No fix available"}
+                            </code>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Dependency Type
+                            </p>
+                            <div className="flex items-center gap-1">
+                              <Badge
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {vuln.isDirectDependency
+                                  ? "Direct"
+                                  : "Transitive"}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Dependency path */}
+                        {vuln.dependencyPath.length > 1 && (
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Dependency Path
+                            </p>
+                            <div className="flex items-center gap-1 flex-wrap text-xs font-mono text-muted-foreground">
+                              {vuln.dependencyPath.map((seg, i) => (
+                                <span key={i} className="flex items-center gap-1">
+                                  {i > 0 && (
+                                    <ChevronRight className="h-3 w-3" />
+                                  )}
+                                  <span
+                                    className={
+                                      i === vuln.dependencyPath.length - 1
+                                        ? config.color
+                                        : ""
+                                    }
+                                  >
+                                    {seg}
+                                  </span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {vuln.cweIds.length > 0 && (
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              CWE IDs
+                            </p>
+                            <div className="flex gap-1 flex-wrap">
+                              {vuln.cweIds.map((cwe) => (
+                                <Badge
+                                  key={cwe}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
+                                  {cwe}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {vuln.publishedDate && (
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Published
+                            </p>
+                            <p className="text-sm text-foreground">
+                              {new Date(vuln.publishedDate).toLocaleDateString(
+                                undefined,
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </p>
+                          </div>
+                        )}
+
+                        {vuln.referenceUrls.length > 0 && (
+                          <div className="flex gap-2 flex-wrap">
+                            {vuln.referenceUrls.map((ref, i) => (
+                              <Button
+                                key={i}
+                                variant="outline"
+                                size="sm"
+                                asChild
+                              >
+                                <a
+                                  href={ref}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <ExternalLink className="mr-1 h-3 w-3" />
+                                  {ref.includes("github.com")
+                                    ? "GitHub Advisory"
+                                    : ref.includes("nvd.nist")
+                                    ? "NVD Detail"
+                                    : "View Reference"}
+                                </a>
+                              </Button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+              );
+            })
           )}
         </CardContent>
       </Card>
