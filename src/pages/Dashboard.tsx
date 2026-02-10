@@ -6,11 +6,12 @@ import { VulnerabilityStats } from "@/components/dashboard/VulnerabilityStats";
 import { DependencyOverview } from "@/components/dashboard/DependencyOverview";
 import { RecentScans } from "@/components/dashboard/RecentScans";
 import { WeakLinkSummary } from "@/components/dashboard/WeakLinkSummary";
+import { VulnerabilityTrendChart } from "@/components/dashboard/VulnerabilityTrendChart";
 import { useScans } from "@/hooks/useScans";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
-  const { data: scans, isLoading } = useScans(5);
+  const { data: scans, isLoading } = useScans(20);
   
   // Get the most recent completed scan for stats
   const latestScan = scans?.find(s => s.status === 'completed');
@@ -117,6 +118,9 @@ export default function Dashboard() {
               transitive={0}
               withIssues={latestScan?.weakLinkSignals || 0}
             />
+
+            {/* Vulnerability trend chart */}
+            <VulnerabilityTrendChart scans={scans || []} />
 
             {/* Weak-link summary */}
             <WeakLinkSummary
