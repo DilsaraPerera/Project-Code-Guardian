@@ -10,6 +10,7 @@ import Dependencies from "./pages/Dependencies";
 import Vulnerabilities from "./pages/Vulnerabilities";
 import Graph from "./pages/Graph";
 import History from "./pages/History";
+import ScanDetail from "./pages/ScanDetail";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/vulnerabilities" element={<Vulnerabilities />} />
             <Route path="/graph" element={<Graph />} />
             <Route path="/history" element={<History />} />
+            <Route path="/history/:scanId" element={<ScanDetail />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
