@@ -1,61 +1,24 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  History as HistoryIcon, 
-  CheckCircle, 
-  XCircle, 
+import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ScanComparisonDialog } from "@/components/history/ScanComparisonDialog";
+import { useScans } from "@/hooks/useScans";
+import {
+  History as HistoryIcon,
+  CheckCircle,
+  XCircle,
   Loader2,
   Eye,
-  Download,
-  Trash2
+  GitCompareArrows,
+  Scan,
 } from "lucide-react";
+import { format } from "date-fns";
 
-// Mock data
-const mockScans = [
-  {
-    id: "scan-1",
-    projectName: "my-react-app",
-    timestamp: new Date(Date.now() - 3600000).toISOString(),
-    status: "completed" as const,
-    grade: "B" as const,
-    totalPackages: 247,
-    vulnerabilities: { critical: 1, high: 3, medium: 8, low: 12 },
-    weakLinks: 19,
-  },
-  {
-    id: "scan-2",
-    projectName: "backend-api",
-    timestamp: new Date(Date.now() - 86400000).toISOString(),
-    status: "completed" as const,
-    grade: "A" as const,
-    totalPackages: 89,
-    vulnerabilities: { critical: 0, high: 0, medium: 1, low: 1 },
-    weakLinks: 3,
-  },
-  {
-    id: "scan-3",
-    projectName: "legacy-app",
-    timestamp: new Date(Date.now() - 172800000).toISOString(),
-    status: "completed" as const,
-    grade: "D" as const,
-    totalPackages: 412,
-    vulnerabilities: { critical: 5, high: 12, medium: 18, low: 12 },
-    weakLinks: 34,
-  },
-  {
-    id: "scan-4",
-    projectName: "test-project",
-    timestamp: new Date(Date.now() - 259200000).toISOString(),
-    status: "failed" as const,
-    grade: undefined,
-    totalPackages: 0,
-    vulnerabilities: { critical: 0, high: 0, medium: 0, low: 0 },
-    weakLinks: 0,
-  },
-];
-
-const gradeColors = {
+const gradeColors: Record<string, string> = {
   A: "bg-success/20 text-success border-success/30",
   B: "bg-success/10 text-success/80 border-success/20",
   C: "bg-warning/20 text-warning border-warning/30",
@@ -64,34 +27,65 @@ const gradeColors = {
 };
 
 export default function History() {
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const { data: scans, isLoading } = useScans();
+  const [selected, setSelected] = useState<string[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : prev.length < 2 ? [...prev, id] : [prev[1], id]
+    );
   };
 
-  const getTotalVulnerabilities = (vulns: typeof mockScans[0]["vulnerabilities"]) => {
-    return vulns.critical + vulns.high + vulns.medium + vulns.low;
-  };
+  const selectedScans = (scans || []).filter((s) => selected.includes(s.id));
+  const scanA = selectedScans[0] ?? null;
+  const scanB = selectedScans[1] ?? null;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64" />
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-20" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Scan History</h1>
           <p className="text-sm text-muted-foreground">
-            View and manage your previous security scans
+            View results and compare scans side-by-side
           </p>
         </div>
-        <Badge variant="outline" className="text-muted-foreground">
-          {mockScans.length} scans
-        </Badge>
+        <div className="flex items-center gap-2">
+          {selected.length === 2 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => setCompareOpen(true)}
+            >
+              <GitCompareArrows className="h-4 w-4" />
+              Compare ({selected.length})
+            </Button>
+          )}
+          <Badge variant="outline" className="text-muted-foreground">
+            {scans?.length ?? 0} scans
+          </Badge>
+        </div>
       </div>
+
+      {/* Comparison hint */}
+      {selected.length > 0 && selected.length < 2 && (
+        <p className="text-xs text-muted-foreground">
+          Select one more completed scan to compare.
+        </p>
+      )}
 
       {/* Scans list */}
       <Card className="bg-gradient-card border-border/50">
@@ -101,90 +95,116 @@ export default function History() {
             All Scans
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {mockScans.map((scan) => (
-            <div
-              key={scan.id}
-              className="flex flex-col gap-4 rounded-lg border border-border/50 bg-background/50 p-4 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="flex items-center gap-4">
-                {scan.status === "completed" && (
-                  <CheckCircle className="h-5 w-5 text-success" />
-                )}
-                {scan.status === "failed" && (
-                  <XCircle className="h-5 w-5 text-danger" />
-                )}
-
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-foreground">
-                      {scan.projectName}
-                    </span>
-                    {scan.grade && (
-                      <Badge
-                        variant="outline"
-                        className={gradeColors[scan.grade]}
-                      >
-                        Grade {scan.grade}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {formatDate(scan.timestamp)}
-                  </p>
-                </div>
-              </div>
-
-              {scan.status === "completed" && (
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Packages:</span>
-                    <span className="font-medium text-foreground">
-                      {scan.totalPackages}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Vulnerabilities:</span>
-                    <span className="font-medium text-severity-high">
-                      {getTotalVulnerabilities(scan.vulnerabilities)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground">Weak Links:</span>
-                    <span className="font-medium text-warning">
-                      {scan.weakLinks}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-2">
-                {scan.status === "completed" && (
-                  <>
-                    <Button variant="outline" size="sm">
-                      <Eye className="mr-1 h-4 w-4" />
-                      View
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="mr-1 h-4 w-4" />
-                      SBOM
-                    </Button>
-                  </>
-                )}
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-danger">
-                  <Trash2 className="h-4 w-4" />
+        <CardContent className="space-y-3">
+          {(!scans || scans.length === 0) && (
+            <div className="flex flex-col items-center py-12 gap-3 text-muted-foreground">
+              <Scan className="h-10 w-10" />
+              <p className="text-sm">No scans yet. Run your first scan to see results here.</p>
+              <Link to="/scan">
+                <Button size="sm" className="gap-2">
+                  <Scan className="h-4 w-4" /> New Scan
                 </Button>
-              </div>
-            </div>
-          ))}
-
-          {mockScans.length === 0 && (
-            <div className="py-8 text-center text-muted-foreground">
-              No scan history available
+              </Link>
             </div>
           )}
+
+          {scans?.map((scan) => {
+            const totalVulns =
+              scan.criticalVulnerabilities +
+              scan.highVulnerabilities +
+              scan.mediumVulnerabilities +
+              scan.lowVulnerabilities;
+            const isCompleted = scan.status === "completed";
+            const isSelected = selected.includes(scan.id);
+
+            return (
+              <div
+                key={scan.id}
+                className={`flex flex-col gap-3 rounded-lg border bg-background/50 p-4 transition-colors sm:flex-row sm:items-center sm:justify-between ${
+                  isSelected
+                    ? "border-primary/50 ring-1 ring-primary/20"
+                    : "border-border/50"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {isCompleted && (
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => toggleSelect(scan.id)}
+                      aria-label={`Select ${scan.projectName} for comparison`}
+                    />
+                  )}
+
+                  {scan.status === "completed" && (
+                    <CheckCircle className="h-4 w-4 text-success shrink-0" />
+                  )}
+                  {scan.status === "failed" && (
+                    <XCircle className="h-4 w-4 text-danger shrink-0" />
+                  )}
+                  {(scan.status === "pending" || scan.status === "scanning") && (
+                    <Loader2 className="h-4 w-4 text-primary animate-spin shrink-0" />
+                  )}
+
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-foreground">
+                        {scan.projectName}
+                      </span>
+                      {isCompleted && (
+                        <Badge
+                          variant="outline"
+                          className={gradeColors[scan.overallRiskGrade]}
+                        >
+                          Grade {scan.overallRiskGrade}
+                        </Badge>
+                      )}
+                      {scan.status === "failed" && (
+                        <Badge variant="outline" className="text-danger border-danger/30">
+                          Failed
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {format(new Date(scan.createdAt), "MMM d, yyyy 'at' h:mm a")}
+                    </p>
+                  </div>
+                </div>
+
+                {isCompleted && (
+                  <div className="flex items-center gap-4 text-sm flex-wrap">
+                    <div>
+                      <span className="text-muted-foreground">Deps: </span>
+                      <span className="font-medium text-foreground">{scan.totalDependencies}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Vulns: </span>
+                      <span className="font-medium text-severity-high">{totalVulns}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Weak: </span>
+                      <span className="font-medium text-warning">{scan.weakLinkSignals}</span>
+                    </div>
+                    <Link to={`/history/${scan.id}`}>
+                      <Button variant="outline" size="sm" className="gap-1.5">
+                        <Eye className="h-3.5 w-3.5" />
+                        Details
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
+
+      {/* Comparison dialog */}
+      <ScanComparisonDialog
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+        scanA={scanA}
+        scanB={scanB}
+      />
     </div>
   );
 }
