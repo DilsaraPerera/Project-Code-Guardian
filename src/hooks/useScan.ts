@@ -54,42 +54,26 @@ export function useScan() {
       
       setScanProgress({ status: 'scanning', progress: 15, message: `Found ${allPackages.length} packages to scan...` });
       
-      // Create scan record
-      const { data: scanData, error: scanError } = await supabase
-        .from('scans')
-        .insert({
-          project_name: detectProjectName(parsed),
-          status: 'scanning',
-          progress: 15,
-          total_packages: allPackages.length,
-          scanned_packages: 0,
-          package_json: packageJsonContent,
-          lockfile_content: lockfileContent || null,
-          total_dependencies: allPackages.length,
-          direct_dependencies: allPackages.filter(p => p.isDirectDependency).length,
-          transitive_dependencies: allPackages.filter(p => !p.isDirectDependency).length,
-        })
-        .select()
-        .single();
-      
-      if (scanError || !scanData) {
-        throw new Error('Failed to create scan record');
-      }
-      
       setScanProgress({ 
         status: 'scanning', 
         progress: 20, 
-        message: 'Starting vulnerability scan...', 
-        scanId: scanData.id 
+        message: 'Starting vulnerability scan...',
       });
       
-      // Call the edge function to scan
+      // Call the edge function to create the scan record AND scan packages
       const { data: scanResult, error: edgeError } = await supabase.functions.invoke(
         'scan-vulnerabilities',
         {
           body: {
-            scanId: scanData.id,
             packages: allPackages,
+            createScan: {
+              project_name: detectProjectName(parsed),
+              package_json: packageJsonContent,
+              lockfile_content: lockfileContent || null,
+              total_dependencies: allPackages.length,
+              direct_dependencies: allPackages.filter(p => p.isDirectDependency).length,
+              transitive_dependencies: allPackages.filter(p => !p.isDirectDependency).length,
+            },
           },
         }
       );
@@ -98,11 +82,13 @@ export function useScan() {
         throw new Error(`Scan failed: ${edgeError.message}`);
       }
       
+      const returnedScanId = scanResult?.scanId;
+      
       setScanProgress({ 
         status: 'completed', 
         progress: 100, 
         message: 'Scan completed!', 
-        scanId: scanData.id 
+        scanId: returnedScanId,
       });
       
       // Fetch the completed scan
