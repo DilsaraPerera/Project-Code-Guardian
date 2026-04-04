@@ -126,22 +126,28 @@ export default {
   					transform: 'translateX(0)'
   				}
   			},
-  			'pulse-glow': {
-  				'0%, 100%': {
-  					opacity: '1'
-  				},
-  				'50%': {
-  					opacity: '0.5'
-  				}
-  			}
-  		},
-  		animation: {
-  			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out',
-  			'fade-in': 'fade-in 0.3s ease-out',
-  			'slide-in-right': 'slide-in-right 0.3s ease-out',
-  			'pulse-glow': 'pulse-glow 2s infinite'
-  		},
+			'pulse-glow': {
+				'0%, 100%': {
+					opacity: '1'
+				},
+				'50%': {
+					opacity: '0.5'
+				}
+			},
+			'scan-sweep': {
+				'0%': { top: '0%' },
+				'50%': { top: '100%' },
+				'100%': { top: '0%' },
+			},
+		},
+		animation: {
+			'accordion-down': 'accordion-down 0.2s ease-out',
+			'accordion-up': 'accordion-up 0.2s ease-out',
+			'fade-in': 'fade-in 0.3s ease-out',
+			'slide-in-right': 'slide-in-right 0.3s ease-out',
+			'pulse-glow': 'pulse-glow 2s infinite',
+			'scan-sweep': 'scan-sweep 1.5s ease-in-out infinite',
+		},
   		fontFamily: {
   			mono: [
   				'Space Mono',

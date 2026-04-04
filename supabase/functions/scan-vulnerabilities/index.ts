@@ -259,10 +259,6 @@ serve(async (req) => {
       );
     }
     
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
     
     const results = [];
     let totalCritical = 0, totalHigh = 0, totalMedium = 0, totalLow = 0;
