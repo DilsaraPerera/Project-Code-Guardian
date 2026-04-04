@@ -208,11 +208,53 @@ serve(async (req) => {
   }
   
   try {
-    const { scanId, packages } = await req.json();
+    const { scanId, packages, createScan } = await req.json();
     
-    if (!scanId || !packages || !Array.isArray(packages)) {
+    if (!packages || !Array.isArray(packages)) {
       return new Response(
-        JSON.stringify({ error: 'Missing scanId or packages array' }),
+        JSON.stringify({ error: 'Missing packages array' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+    
+    let activeScanId = scanId;
+    
+    // If createScan payload is provided, create the scan record server-side
+    if (createScan && !scanId) {
+      const { data: newScan, error: createError } = await supabase
+        .from('scans')
+        .insert({
+          project_name: createScan.project_name || 'Unknown Project',
+          status: 'scanning',
+          progress: 15,
+          total_packages: packages.length,
+          scanned_packages: 0,
+          package_json: createScan.package_json,
+          lockfile_content: createScan.lockfile_content || null,
+          total_dependencies: createScan.total_dependencies || packages.length,
+          direct_dependencies: createScan.direct_dependencies || 0,
+          transitive_dependencies: createScan.transitive_dependencies || 0,
+        })
+        .select()
+        .single();
+      
+      if (createError || !newScan) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to create scan record' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      activeScanId = newScan.id;
+    }
+    
+    if (!activeScanId) {
+      return new Response(
+        JSON.stringify({ error: 'Missing scanId or createScan payload' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
