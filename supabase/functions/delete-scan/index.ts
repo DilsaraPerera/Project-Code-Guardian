@@ -13,7 +13,8 @@ serve(async (req) => {
 
   try {
     const { scanId } = await req.json();
-    if (!scanId || typeof scanId !== 'string') {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!scanId || typeof scanId !== 'string' || !uuidRegex.test(scanId)) {
       return new Response(
         JSON.stringify({ error: 'Missing or invalid scanId' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
