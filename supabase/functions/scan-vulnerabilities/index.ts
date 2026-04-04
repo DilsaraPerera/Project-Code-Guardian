@@ -280,7 +280,7 @@ serve(async (req) => {
           scanned_packages: i + 1,
           progress: Math.round(((i + 1) / packages.length) * 100)
         })
-        .eq('id', scanId);
+        .eq('id', activeScanId);
       
       // Query OSV for vulnerabilities
       const osvResponse = await queryOSV(name, version);
@@ -347,7 +347,7 @@ serve(async (req) => {
       const { data: depData, error: depError } = await supabase
         .from('dependencies')
         .insert({
-          scan_id: scanId,
+          scan_id: activeScanId,
           name,
           version,
           description: npmInfo?.description,
@@ -440,7 +440,7 @@ serve(async (req) => {
         overall_risk_score: avgRisk,
         overall_risk_grade: overallGrade,
       })
-      .eq('id', scanId);
+      .eq('id', activeScanId);
     
     return new Response(
       JSON.stringify({
