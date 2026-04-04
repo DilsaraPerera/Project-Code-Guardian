@@ -72,8 +72,7 @@ export function useScanDetails(scanId: string | undefined) {
         .select(`
           *,
           vulnerabilities (*),
-          weak_links (*),
-          maintainers (*)
+          weak_links (*)
         `)
         .eq('scan_id', scanId)
         .order('risk_score', { ascending: false });
