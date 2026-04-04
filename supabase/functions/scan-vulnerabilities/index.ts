@@ -445,7 +445,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        scanId,
+        scanId: activeScanId,
         summary: {
           totalPackages: packages.length,
           criticalVulnerabilities: totalCritical,
