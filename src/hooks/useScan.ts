@@ -95,7 +95,7 @@ export function useScan() {
       const { data: completedScan } = await supabase
         .from('scans')
         .select('*')
-        .eq('id', scanData.id)
+        .eq('id', returnedScanId)
         .single();
       
       if (completedScan) {
