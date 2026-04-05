@@ -92,8 +92,8 @@ export default function History() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Scan History</h1>
-          <p className="text-sm text-muted-foreground">View results and compare scans side-by-side</p>
+          <h1 className="text-2xl font-bold text-primary">Scan History</h1>
+          <p className="text-sm text-primary/70">View results and compare scans side-by-side</p>
         </div>
         <div className="flex items-center gap-2">
           {selected.length === 2 && (
@@ -102,24 +102,24 @@ export default function History() {
               Compare ({selected.length})
             </Button>
           )}
-          <Badge variant="outline" className="text-muted-foreground">{scans?.length ?? 0} scans</Badge>
+          <Badge variant="outline" className="text-primary/60">{scans?.length ?? 0} scans</Badge>
         </div>
       </div>
 
       {selected.length > 0 && selected.length < 2 && (
-        <p className="text-xs text-muted-foreground">Select one more completed scan to compare.</p>
+        <p className="text-xs text-primary/60">Select one more completed scan to compare.</p>
       )}
 
       <Card className="bg-gradient-card border-border/50">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-lg font-medium">
+          <CardTitle className="flex items-center gap-2 text-lg font-medium text-primary">
             <HistoryIcon className="h-5 w-5 text-primary" />
             All Scans
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {(!scans || scans.length === 0) && (
-            <div className="flex flex-col items-center py-12 gap-3 text-muted-foreground">
+            <div className="flex flex-col items-center py-12 gap-3 text-primary/60">
               <Scan className="h-10 w-10" />
               <p className="text-sm">No scans yet. Run your first scan to see results here.</p>
               <Link to="/scan">
@@ -155,7 +155,7 @@ export default function History() {
                   )}
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-foreground">{scan.projectName}</span>
+                      <span className="font-medium text-primary">{scan.projectName}</span>
                       {isCompleted && (
                         <Badge variant="outline" className={gradeColors[scan.overallRiskGrade]}>
                           Grade {scan.overallRiskGrade}
@@ -165,7 +165,7 @@ export default function History() {
                         <Badge variant="outline" className="text-danger border-danger/30">Failed</Badge>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <p className="text-xs text-primary/60 mt-0.5">
                       {format(new Date(scan.createdAt), "MMM d, yyyy 'at' h:mm a")}
                     </p>
                   </div>
@@ -174,9 +174,9 @@ export default function History() {
                 <div className="flex items-center gap-3 text-sm flex-wrap">
                   {isCompleted && (
                     <>
-                      <div><span className="text-muted-foreground">Deps: </span><span className="font-medium text-foreground">{scan.totalDependencies}</span></div>
-                      <div><span className="text-muted-foreground">Vulns: </span><span className="font-medium text-severity-high">{totalVulns}</span></div>
-                      <div><span className="text-muted-foreground">Weak: </span><span className="font-medium text-warning">{scan.weakLinkSignals}</span></div>
+                      <div><span className="text-primary/60">Deps: </span><span className="font-medium text-primary">{scan.totalDependencies}</span></div>
+                      <div><span className="text-primary/60">Vulns: </span><span className="font-medium text-severity-high">{totalVulns}</span></div>
+                      <div><span className="text-primary/60">Weak: </span><span className="font-medium text-warning">{scan.weakLinkSignals}</span></div>
                       <Link to={`/history/${scan.id}`}>
                         <Button variant="outline" size="sm" className="gap-1.5">
                           <Eye className="h-3.5 w-3.5" /> Details
@@ -187,7 +187,7 @@ export default function History() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-muted-foreground hover:text-danger"
+                    className="text-primary/50 hover:text-danger"
                     onClick={() => setDeleteId(scan.id)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />

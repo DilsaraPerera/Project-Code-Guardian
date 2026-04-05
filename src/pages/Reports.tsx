@@ -72,8 +72,8 @@ export default function Reports() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Reports & SBOM</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="text-2xl font-bold text-primary">Reports & SBOM</h1>
+        <p className="text-sm text-primary/70">
           Generate security reports and Software Bill of Materials
         </p>
       </div>
@@ -82,7 +82,7 @@ export default function Reports() {
       <Card className="bg-gradient-card border-border/50">
         <CardContent className="pt-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <span className="text-sm font-medium text-foreground">Select scan:</span>
+            <span className="text-sm font-medium text-primary">Select scan:</span>
             <Select value={selectedScanId} onValueChange={setSelectedScanId}>
               <SelectTrigger className="w-full sm:w-80">
                 <SelectValue placeholder="Choose a completed scan..." />
@@ -96,7 +96,7 @@ export default function Reports() {
               </SelectContent>
             </Select>
             {completedScans.length === 0 && (
-              <p className="text-xs text-muted-foreground">Run a scan first to generate reports.</p>
+              <p className="text-xs text-primary/60">Run a scan first to generate reports.</p>
             )}
           </div>
         </CardContent>
@@ -106,11 +106,11 @@ export default function Reports() {
         {/* SBOM Export */}
         <Card className="bg-gradient-card border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-primary">
               <FileJson className="h-5 w-5 text-primary" />
               SBOM Export
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-primary/60">
               Generate Software Bill of Materials in industry-standard formats
             </CardDescription>
           </CardHeader>
@@ -125,8 +125,8 @@ export default function Reports() {
                   <div className="flex items-center gap-3">
                     <item.icon className="h-8 w-8 text-primary" />
                     <div>
-                      <p className="font-medium text-foreground">{item.label}</p>
-                      <p className="text-sm text-muted-foreground">{item.desc}</p>
+                      <p className="font-medium text-primary">{item.label}</p>
+                      <p className="text-sm text-primary/60">{item.desc}</p>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" disabled={!hasScan} onClick={() => handleExport(item.key)}>
@@ -142,11 +142,11 @@ export default function Reports() {
         {/* Security Reports */}
         <Card className="bg-gradient-card border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-primary">
               <FileText className="h-5 w-5 text-primary" />
               Security Reports
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-primary/60">
               Generate comprehensive security analysis reports
             </CardDescription>
           </CardHeader>
@@ -161,8 +161,8 @@ export default function Reports() {
                   <div className="flex items-center gap-3">
                     <FileText className="h-8 w-8 text-primary" />
                     <div>
-                      <p className="font-medium text-foreground">{item.label}</p>
-                      <p className="text-sm text-muted-foreground">{item.desc}</p>
+                      <p className="font-medium text-primary">{item.label}</p>
+                      <p className="text-sm text-primary/60">{item.desc}</p>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" disabled={!hasScan} onClick={() => handleReport(item.key)}>

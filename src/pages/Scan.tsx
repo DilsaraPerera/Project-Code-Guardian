@@ -112,8 +112,8 @@ export default function Scan() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">New Security Scan</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="text-2xl font-bold text-primary">New Security Scan</h1>
+        <p className="text-sm text-primary/70">
           Analyze your project dependencies for vulnerabilities and weak-link signals
         </p>
       </div>
@@ -123,11 +123,11 @@ export default function Scan() {
         <div className="lg:col-span-2 space-y-4">
           <Card className="bg-gradient-card border-border/50">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-primary">
                 <FileJson className="h-5 w-5 text-primary" />
                 Package.json
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-primary/60">
                 Paste your package.json content or upload the file
               </CardDescription>
             </CardHeader>
@@ -143,8 +143,8 @@ export default function Scan() {
                     disabled={isScanning}
                   />
                   <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background/50 p-4 transition-all hover:border-primary hover:bg-background">
-                    <Upload className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
+                    <Upload className="h-5 w-5 text-primary/50" />
+                    <span className="text-sm text-primary/60">
                       Upload package.json
                     </span>
                   </div>
@@ -158,8 +158,8 @@ export default function Scan() {
                     disabled={isScanning}
                   />
                   <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background/50 p-4 transition-all hover:border-primary hover:bg-background">
-                    <Lock className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
+                    <Lock className="h-5 w-5 text-primary/50" />
+                    <span className="text-sm text-primary/60">
                       Upload lockfile (optional)
                     </span>
                   </div>
@@ -175,7 +175,7 @@ export default function Scan() {
 
               <div className="relative flex items-center">
                 <div className="flex-1 border-t border-border" />
-                <span className="px-3 text-xs text-muted-foreground">or paste content</span>
+                <span className="px-3 text-xs text-primary/50">or paste content</span>
                 <div className="flex-1 border-t border-border" />
               </div>
 
@@ -218,7 +218,7 @@ export default function Scan() {
               <CardContent className="pt-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{scanProgress.message}</span>
+                    <span className="text-primary/70">{scanProgress.message}</span>
                     <span className="font-mono text-primary">{scanProgress.progress}%</span>
                   </div>
                   <Progress value={scanProgress.progress} className="h-2" />
@@ -269,23 +269,23 @@ export default function Scan() {
           {counts && (
             <Card className="bg-gradient-card border-border/50">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-sm font-medium text-primary/80">
                   Detected Packages
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-foreground">Dependencies</span>
+                    <span className="text-sm text-primary">Dependencies</span>
                     <Badge variant="outline">{counts.deps}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-foreground">Dev Dependencies</span>
+                    <span className="text-sm text-primary">Dev Dependencies</span>
                     <Badge variant="outline">{counts.devDeps}</Badge>
                   </div>
                   <div className="border-t border-border pt-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-foreground">Total</span>
+                      <span className="text-sm font-medium text-primary">Total</span>
                       <Badge className="bg-primary/20 text-primary">
                         {counts.deps + counts.devDeps}
                       </Badge>
@@ -299,36 +299,25 @@ export default function Scan() {
           {/* What we check */}
           <Card className="bg-gradient-card border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-primary/80">
                 Security Checks
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 mt-0.5 text-success" />
-                  <span className="text-muted-foreground">Known CVE vulnerabilities</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 mt-0.5 text-success" />
-                  <span className="text-muted-foreground">Install script detection</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 mt-0.5 text-success" />
-                  <span className="text-muted-foreground">Maintainer activity analysis</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 mt-0.5 text-success" />
-                  <span className="text-muted-foreground">Typosquatting detection</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 mt-0.5 text-success" />
-                  <span className="text-muted-foreground">Deprecated package alerts</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-4 w-4 mt-0.5 text-success" />
-                  <span className="text-muted-foreground">SBOM generation</span>
-                </li>
+                {[
+                  "Known CVE vulnerabilities",
+                  "Install script detection",
+                  "Maintainer activity analysis",
+                  "Typosquatting detection",
+                  "Deprecated package alerts",
+                  "SBOM generation",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 mt-0.5 text-success" />
+                    <span className="text-primary/70">{item}</span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -336,7 +325,7 @@ export default function Scan() {
           {/* Data sources */}
           <Card className="bg-gradient-card border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-primary/80">
                 Data Sources
               </CardTitle>
             </CardHeader>

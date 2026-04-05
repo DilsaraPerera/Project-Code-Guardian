@@ -141,8 +141,8 @@ export default function Vulnerabilities() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Vulnerabilities</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-primary">Vulnerabilities</h1>
+          <p className="text-sm text-primary/70">
             Security vulnerabilities detected in your dependencies
           </p>
         </div>
@@ -150,10 +150,10 @@ export default function Vulnerabilities() {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
             <Shield className="h-8 w-8 text-primary" />
           </div>
-          <h2 className="text-xl font-semibold text-foreground mb-2">
+          <h2 className="text-xl font-semibold text-primary mb-2">
             No scans yet
           </h2>
-          <p className="text-center text-muted-foreground mb-6 max-w-md">
+          <p className="text-center text-primary/60 mb-6 max-w-md">
             Run a scan to detect vulnerabilities in your project dependencies.
           </p>
           <Link to="/scan">
@@ -172,8 +172,8 @@ export default function Vulnerabilities() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Vulnerabilities</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-primary">Vulnerabilities</h1>
+          <p className="text-sm text-primary/70">
             Security vulnerabilities detected in your dependencies
           </p>
         </div>
@@ -228,7 +228,7 @@ export default function Vulnerabilities() {
                       <p className={`text-2xl font-bold ${config.color}`}>
                         {count}
                       </p>
-                      <p className="text-xs text-muted-foreground capitalize">
+                      <p className="text-xs text-primary/60 capitalize">
                         {severity}
                       </p>
                     </div>
@@ -244,14 +244,14 @@ export default function Vulnerabilities() {
       <Card className="bg-gradient-card border-border/50">
         <CardHeader className="pb-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle className="text-lg font-medium">
+            <CardTitle className="text-lg font-medium text-primary">
               {isLoading
                 ? "Loading…"
                 : `${filteredVulnerabilities.length} Vulnerabilities Found`}
             </CardTitle>
             <div className="flex gap-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/50" />
                 <Input
                   placeholder="Search by CVE, package, title…"
                   value={searchQuery}
@@ -301,8 +301,8 @@ export default function Vulnerabilities() {
             </div>
           ) : filteredVulnerabilities.length === 0 ? (
             <div className="py-12 text-center">
-              <ShieldAlert className="mx-auto h-12 w-12 text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">
+              <ShieldAlert className="mx-auto h-12 w-12 text-primary/30 mb-3" />
+              <p className="text-primary/60">
                 {vulnerabilities && vulnerabilities.length > 0
                   ? "No vulnerabilities match your filters"
                   : "No vulnerabilities found in this scan — your dependencies look clean!"}
@@ -330,7 +330,7 @@ export default function Vulnerabilities() {
                         />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium text-foreground truncate">
+                            <span className="font-medium text-primary truncate">
                               {vuln.title}
                             </span>
                             <Badge
@@ -340,7 +340,7 @@ export default function Vulnerabilities() {
                               {vuln.source.toUpperCase()}
                             </Badge>
                           </div>
-                          <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
+                          <div className="flex items-center gap-3 text-sm text-primary/60 flex-wrap">
                             <span className="font-mono text-xs">
                               {vuln.sourceId}
                             </span>
@@ -367,31 +367,31 @@ export default function Vulnerabilities() {
                           {vuln.severity}
                         </Badge>
                         {isExpanded ? (
-                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          <ChevronDown className="h-4 w-4 text-primary/50" />
                         ) : (
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          <ChevronRight className="h-4 w-4 text-primary/50" />
                         )}
                       </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-border/50 p-4 space-y-4">
                         {vuln.description && (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-primary/70">
                             {vuln.description}
                           </p>
                         )}
 
                         <div className="grid gap-4 sm:grid-cols-3">
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                            <p className="text-xs font-medium text-primary/60 mb-1">
                               Affected Versions
                             </p>
-                            <code className="text-sm text-foreground">
+                            <code className="text-sm text-primary">
                               {vuln.affectedVersions || "N/A"}
                             </code>
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                            <p className="text-xs font-medium text-primary/60 mb-1">
                               Patched Versions
                             </p>
                             <code className="text-sm text-success">
@@ -399,7 +399,7 @@ export default function Vulnerabilities() {
                             </code>
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                            <p className="text-xs font-medium text-primary/60 mb-1">
                               Dependency Type
                             </p>
                             <div className="flex items-center gap-1">
@@ -418,10 +418,10 @@ export default function Vulnerabilities() {
                         {/* Dependency path */}
                         {vuln.dependencyPath.length > 1 && (
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                            <p className="text-xs font-medium text-primary/60 mb-1">
                               Dependency Path
                             </p>
-                            <div className="flex items-center gap-1 flex-wrap text-xs font-mono text-muted-foreground">
+                            <div className="flex items-center gap-1 flex-wrap text-xs font-mono text-primary/60">
                               {vuln.dependencyPath.map((seg, i) => (
                                 <span key={i} className="flex items-center gap-1">
                                   {i > 0 && (
@@ -444,7 +444,7 @@ export default function Vulnerabilities() {
 
                         {vuln.cweIds.length > 0 && (
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                            <p className="text-xs font-medium text-primary/60 mb-1">
                               CWE IDs
                             </p>
                             <div className="flex gap-1 flex-wrap">
@@ -463,10 +463,10 @@ export default function Vulnerabilities() {
 
                         {vuln.publishedDate && (
                           <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                            <p className="text-xs font-medium text-primary/60 mb-1">
                               Published
                             </p>
-                            <p className="text-sm text-foreground">
+                            <p className="text-sm text-primary">
                               {new Date(vuln.publishedDate).toLocaleDateString(
                                 undefined,
                                 {
