@@ -26,7 +26,6 @@ export default function Graph() {
   const [containerSize, setContainerSize] = useState({ width: 800, height: 500 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-select latest completed scan
   useEffect(() => {
     if (!selectedScanId && completedScans.length > 0) {
       setSelectedScanId(completedScans[0].id);
@@ -35,17 +34,12 @@ export default function Graph() {
 
   const { data: graphData, isLoading: graphLoading } = useDependencyGraph(selectedScanId);
 
-  // Track container size
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setContainerSize({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
-        });
+        setContainerSize({ width: entry.contentRect.width, height: entry.contentRect.height });
       }
     });
     observer.observe(el);
@@ -63,8 +57,8 @@ export default function Graph() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Dependency Graph</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-primary">Dependency Graph</h1>
+          <p className="text-sm text-primary/70">
             Visualize your project's dependency tree with vulnerability propagation
           </p>
         </div>
@@ -90,26 +84,26 @@ export default function Graph() {
       <Card className="bg-gradient-card border-border/50 relative">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg font-medium">
+            <CardTitle className="flex items-center gap-2 text-lg font-medium text-primary">
               <Network className="h-5 w-5 text-primary" />
               Dependency Tree
             </CardTitle>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-success" />
-                <span className="text-xs text-muted-foreground">Healthy</span>
+                <span className="text-xs text-primary/60">Healthy</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-warning" />
-                <span className="text-xs text-muted-foreground">Weak Links</span>
+                <span className="text-xs text-primary/60">Weak Links</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-severity-high" />
-                <span className="text-xs text-muted-foreground">Vulnerable</span>
+                <span className="text-xs text-primary/60">Vulnerable</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-severity-critical" />
-                <span className="text-xs text-muted-foreground">Critical</span>
+                <span className="text-xs text-primary/60">Critical</span>
               </div>
             </div>
           </div>
@@ -123,7 +117,7 @@ export default function Graph() {
               <div className="flex h-full items-center justify-center">
                 <div className="text-center space-y-3">
                   <Skeleton className="h-16 w-16 rounded-full mx-auto" />
-                  <p className="text-sm text-muted-foreground">Loading graph data…</p>
+                  <p className="text-sm text-primary/60">Loading graph data…</p>
                 </div>
               </div>
             ) : hasData ? (
@@ -136,9 +130,9 @@ export default function Graph() {
             ) : (
               <div className="flex h-full items-center justify-center">
                 <div className="text-center">
-                  <Network className="mx-auto h-16 w-16 text-muted-foreground/30 mb-4" />
-                  <p className="text-muted-foreground mb-2">No dependency data to visualize</p>
-                  <p className="text-sm text-muted-foreground/70 max-w-md">
+                  <Network className="mx-auto h-16 w-16 text-primary/30 mb-4" />
+                  <p className="text-primary/70 mb-2">No dependency data to visualize</p>
+                  <p className="text-sm text-primary/50 max-w-md">
                     Run a scan first to see your project's dependency tree with color-coded risk levels
                   </p>
                   <Link to="/scan">
@@ -151,7 +145,6 @@ export default function Graph() {
             )}
           </div>
 
-          {/* Node detail panel overlay */}
           {selectedNode && (
             <div className="absolute top-4 right-4 z-10">
               <NodeDetailPanel
@@ -165,38 +158,19 @@ export default function Graph() {
 
       {/* Stats panel */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <Card className="bg-gradient-card border-border/50">
-          <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Total Nodes</p>
-            <p className="text-2xl font-bold text-foreground">
-              {hasData ? graphData.stats.totalNodes : '--'}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-card border-border/50">
-          <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Max Depth</p>
-            <p className="text-2xl font-bold text-foreground">
-              {hasData ? graphData.stats.maxDepth : '--'}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-card border-border/50">
-          <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Circular Deps</p>
-            <p className="text-2xl font-bold text-foreground">
-              {hasData ? graphData.stats.circularDeps : '--'}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-card border-border/50">
-          <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">High-Risk Paths</p>
-            <p className="text-2xl font-bold text-foreground">
-              {hasData ? graphData.stats.highRiskPaths : '--'}
-            </p>
-          </CardContent>
-        </Card>
+        {[
+          { label: "Total Nodes", value: hasData ? graphData.stats.totalNodes : '--' },
+          { label: "Max Depth", value: hasData ? graphData.stats.maxDepth : '--' },
+          { label: "Circular Deps", value: hasData ? graphData.stats.circularDeps : '--' },
+          { label: "High-Risk Paths", value: hasData ? graphData.stats.highRiskPaths : '--' },
+        ].map((stat) => (
+          <Card key={stat.label} className="bg-gradient-card border-border/50">
+            <CardContent className="pt-4">
+              <p className="text-sm text-primary/60">{stat.label}</p>
+              <p className="text-2xl font-bold text-primary">{stat.value}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );

@@ -29,66 +29,12 @@ import {
 
 // Mock data - will be replaced with real data
 const mockDependencies = [
-  {
-    name: "lodash",
-    version: "4.17.21",
-    isDev: false,
-    isDirect: true,
-    vulnerabilities: 0,
-    weakLinks: 1,
-    riskLevel: "low" as const,
-    lastUpdated: "2024-02-15",
-  },
-  {
-    name: "axios",
-    version: "0.21.1",
-    isDev: false,
-    isDirect: true,
-    vulnerabilities: 2,
-    weakLinks: 0,
-    riskLevel: "high" as const,
-    lastUpdated: "2021-01-01",
-  },
-  {
-    name: "express",
-    version: "4.18.2",
-    isDev: false,
-    isDirect: true,
-    vulnerabilities: 0,
-    weakLinks: 0,
-    riskLevel: "low" as const,
-    lastUpdated: "2024-01-10",
-  },
-  {
-    name: "node-fetch",
-    version: "2.6.1",
-    isDev: false,
-    isDirect: false,
-    vulnerabilities: 1,
-    weakLinks: 2,
-    riskLevel: "medium" as const,
-    lastUpdated: "2020-09-05",
-  },
-  {
-    name: "minimist",
-    version: "1.2.5",
-    isDev: false,
-    isDirect: false,
-    vulnerabilities: 1,
-    weakLinks: 1,
-    riskLevel: "critical" as const,
-    lastUpdated: "2020-03-12",
-  },
-  {
-    name: "jest",
-    version: "29.7.0",
-    isDev: true,
-    isDirect: true,
-    vulnerabilities: 0,
-    weakLinks: 0,
-    riskLevel: "low" as const,
-    lastUpdated: "2024-01-20",
-  },
+  { name: "lodash", version: "4.17.21", isDev: false, isDirect: true, vulnerabilities: 0, weakLinks: 1, riskLevel: "low" as const, lastUpdated: "2024-02-15" },
+  { name: "axios", version: "0.21.1", isDev: false, isDirect: true, vulnerabilities: 2, weakLinks: 0, riskLevel: "high" as const, lastUpdated: "2021-01-01" },
+  { name: "express", version: "4.18.2", isDev: false, isDirect: true, vulnerabilities: 0, weakLinks: 0, riskLevel: "low" as const, lastUpdated: "2024-01-10" },
+  { name: "node-fetch", version: "2.6.1", isDev: false, isDirect: false, vulnerabilities: 1, weakLinks: 2, riskLevel: "medium" as const, lastUpdated: "2020-09-05" },
+  { name: "minimist", version: "1.2.5", isDev: false, isDirect: false, vulnerabilities: 1, weakLinks: 1, riskLevel: "critical" as const, lastUpdated: "2020-03-12" },
+  { name: "jest", version: "29.7.0", isDev: true, isDirect: true, vulnerabilities: 0, weakLinks: 0, riskLevel: "low" as const, lastUpdated: "2024-01-20" },
 ];
 
 const riskColors = {
@@ -106,18 +52,12 @@ export default function Dependencies() {
 
   const filteredDependencies = mockDependencies.filter((dep) => {
     const matchesSearch = dep.name.toLowerCase().includes(searchQuery.toLowerCase());
-    
     switch (filter) {
-      case 'direct':
-        return matchesSearch && dep.isDirect;
-      case 'transitive':
-        return matchesSearch && !dep.isDirect;
-      case 'dev':
-        return matchesSearch && dep.isDev;
-      case 'with-issues':
-        return matchesSearch && (dep.vulnerabilities > 0 || dep.weakLinks > 0);
-      default:
-        return matchesSearch;
+      case 'direct': return matchesSearch && dep.isDirect;
+      case 'transitive': return matchesSearch && !dep.isDirect;
+      case 'dev': return matchesSearch && dep.isDev;
+      case 'with-issues': return matchesSearch && (dep.vulnerabilities > 0 || dep.weakLinks > 0);
+      default: return matchesSearch;
     }
   });
 
@@ -133,8 +73,8 @@ export default function Dependencies() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Dependencies</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="text-2xl font-bold text-primary">Dependencies</h1>
+        <p className="text-sm text-primary/70">
           View and analyze all project dependencies
         </p>
       </div>
@@ -148,8 +88,8 @@ export default function Dependencies() {
                 <Package className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">{mockDependencies.length}</p>
-                <p className="text-xs text-muted-foreground">Total Packages</p>
+                <p className="text-2xl font-bold text-primary">{mockDependencies.length}</p>
+                <p className="text-xs text-primary/60">Total Packages</p>
               </div>
             </div>
           </CardContent>
@@ -161,10 +101,10 @@ export default function Dependencies() {
                 <Shield className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-2xl font-bold text-primary">
                   {mockDependencies.filter(d => d.vulnerabilities === 0 && d.weakLinks === 0).length}
                 </p>
-                <p className="text-xs text-muted-foreground">Clean Packages</p>
+                <p className="text-xs text-primary/60">Clean Packages</p>
               </div>
             </div>
           </CardContent>
@@ -176,10 +116,10 @@ export default function Dependencies() {
                 <AlertTriangle className="h-5 w-5 text-severity-high" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-2xl font-bold text-primary">
                   {mockDependencies.filter(d => d.vulnerabilities > 0).length}
                 </p>
-                <p className="text-xs text-muted-foreground">Vulnerable</p>
+                <p className="text-xs text-primary/60">Vulnerable</p>
               </div>
             </div>
           </CardContent>
@@ -191,10 +131,10 @@ export default function Dependencies() {
                 <AlertTriangle className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-2xl font-bold text-primary">
                   {mockDependencies.filter(d => d.weakLinks > 0).length}
                 </p>
-                <p className="text-xs text-muted-foreground">With Weak Links</p>
+                <p className="text-xs text-primary/60">With Weak Links</p>
               </div>
             </div>
           </CardContent>
@@ -205,10 +145,10 @@ export default function Dependencies() {
       <Card className="bg-gradient-card border-border/50">
         <CardHeader className="pb-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle className="text-lg font-medium">Package List</CardTitle>
+            <CardTitle className="text-lg font-medium text-primary">Package List</CardTitle>
             <div className="flex gap-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/50" />
                 <Input
                   placeholder="Search packages..."
                   value={searchQuery}
@@ -243,25 +183,25 @@ export default function Dependencies() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Package</TableHead>
-                <TableHead>Version</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="text-center">Vulnerabilities</TableHead>
-                <TableHead className="text-center">Weak Links</TableHead>
-                <TableHead>Risk Level</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-primary/80">Package</TableHead>
+                <TableHead className="text-primary/80">Version</TableHead>
+                <TableHead className="text-primary/80">Type</TableHead>
+                <TableHead className="text-center text-primary/80">Vulnerabilities</TableHead>
+                <TableHead className="text-center text-primary/80">Weak Links</TableHead>
+                <TableHead className="text-primary/80">Risk Level</TableHead>
+                <TableHead className="text-right text-primary/80">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredDependencies.map((dep) => (
                 <TableRow key={dep.name} className="hover:bg-background/50">
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium text-primary">
                     <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-muted-foreground" />
+                      <Package className="h-4 w-4 text-primary/50" />
                       {dep.name}
                     </div>
                   </TableCell>
-                  <TableCell className="font-mono text-sm text-muted-foreground">
+                  <TableCell className="font-mono text-sm text-primary/60">
                     {dep.version}
                   </TableCell>
                   <TableCell>
@@ -269,10 +209,10 @@ export default function Dependencies() {
                       {dep.isDirect ? (
                         <Badge variant="outline" className="text-xs">Direct</Badge>
                       ) : (
-                        <Badge variant="outline" className="text-xs text-muted-foreground">Transitive</Badge>
+                        <Badge variant="outline" className="text-xs text-primary/60">Transitive</Badge>
                       )}
                       {dep.isDev && (
-                        <Badge variant="outline" className="text-xs text-muted-foreground">Dev</Badge>
+                        <Badge variant="outline" className="text-xs text-primary/60">Dev</Badge>
                       )}
                     </div>
                   </TableCell>
@@ -282,7 +222,7 @@ export default function Dependencies() {
                         {dep.vulnerabilities}
                       </Badge>
                     ) : (
-                      <span className="text-muted-foreground">0</span>
+                      <span className="text-primary/50">0</span>
                     )}
                   </TableCell>
                   <TableCell className="text-center">
@@ -291,7 +231,7 @@ export default function Dependencies() {
                         {dep.weakLinks}
                       </Badge>
                     ) : (
-                      <span className="text-muted-foreground">0</span>
+                      <span className="text-primary/50">0</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -316,7 +256,7 @@ export default function Dependencies() {
           </Table>
 
           {filteredDependencies.length === 0 && (
-            <div className="py-8 text-center text-muted-foreground">
+            <div className="py-8 text-center text-primary/60">
               No dependencies found matching your criteria
             </div>
           )}
