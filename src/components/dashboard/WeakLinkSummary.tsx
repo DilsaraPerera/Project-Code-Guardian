@@ -77,7 +77,7 @@ export function WeakLinkSummary({
     <Card className="bg-gradient-card border-border/50">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between text-sm font-medium text-muted-foreground">
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 text-primary/80">
             <Link2Off className="h-4 w-4" />
             Weak-Link Signals
           </span>
@@ -98,7 +98,7 @@ export function WeakLinkSummary({
                   <signal.icon className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">{signal.label}</p>
+                  <p className="text-sm font-medium text-primary">{signal.label}</p>
                   <p className="text-xs text-muted-foreground">{signal.description}</p>
                 </div>
               </div>

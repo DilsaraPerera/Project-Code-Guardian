@@ -83,7 +83,7 @@ export function WelcomeLoader({ onComplete }: WelcomeLoaderProps) {
               phase >= 1 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
-            DepShield
+            CODE GUARDIAN
           </h1>
           <p
             className={`text-sm font-mono text-muted-foreground transition-all duration-500 ${

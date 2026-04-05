@@ -29,7 +29,7 @@ export function SecurityScoreCard({ grade, score, label = "Security Score" }: Se
   return (
     <Card className="bg-gradient-card border-border/50">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-sm font-medium text-primary/80">
           {label}
         </CardTitle>
       </CardHeader>
@@ -45,8 +45,8 @@ export function SecurityScoreCard({ grade, score, label = "Security Score" }: Se
             {grade}
           </div>
           <div>
-            <div className="text-2xl font-bold text-foreground">{score}/100</div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-2xl font-bold text-primary">{score}/100</div>
+            <div className="text-sm text-primary/60">
               {grade === '-' ? 'No scan data' : 
                grade === 'A' ? 'Excellent' :
                grade === 'B' ? 'Good' :
