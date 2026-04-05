@@ -80,7 +80,7 @@ export function AppSidebar() {
             <Shield className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-foreground">SupplyShield</h1>
+            <h1 className="text-lg font-bold text-primary">CODE GUARDIAN</h1>
             <p className="text-xs text-muted-foreground">Supply Chain Security</p>
           </div>
         </div>

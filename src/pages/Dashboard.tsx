@@ -33,8 +33,8 @@ export default function Dashboard() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Security Dashboard</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="text-2xl font-bold text-primary">Security Dashboard</h1>
+            <p className="text-sm text-primary/70">
               Monitor your supply chain security posture
             </p>
           </div>
@@ -59,8 +59,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Security Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-primary">Security Dashboard</h1>
+          <p className="text-sm text-primary/70">
             Monitor your supply chain security posture
           </p>
         </div>

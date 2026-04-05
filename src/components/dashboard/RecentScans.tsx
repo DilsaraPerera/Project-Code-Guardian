@@ -43,7 +43,7 @@ export function RecentScans({ scans }: RecentScansProps) {
   return (
     <Card className="bg-gradient-card border-border/50">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+        <CardTitle className="flex items-center gap-2 text-sm font-medium text-primary/80">
           <Clock className="h-4 w-4" />
           Recent Scans
         </CardTitle>
@@ -82,7 +82,7 @@ export function RecentScans({ scans }: RecentScansProps) {
                     <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   )}
                   <div>
-                    <p className="text-sm font-medium text-foreground">
+                    <p className="text-sm font-medium text-primary">
                       {scan.projectName}
                     </p>
                     <p className="text-xs text-muted-foreground">
