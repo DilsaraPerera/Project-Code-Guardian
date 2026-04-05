@@ -69,7 +69,7 @@ export function RecentScans({ scans }: RecentScansProps) {
             {scans.map((scan) => (
               <div
                 key={scan.id}
-                className="flex items-center justify-between rounded-lg border border-border/50 bg-background/50 p-3 transition-all hover:border-primary/30 hover:bg-background"
+                className="flex items-center justify-between rounded-lg border border-border/50 bg-background/50 p-3 transition-all hover:border-primary/30 hover:bg-secondary/10"
               >
                 <div className="flex items-center gap-3">
                   {scan.status === 'completed' && (
@@ -92,8 +92,8 @@ export function RecentScans({ scans }: RecentScansProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   {scan.status === 'completed' && scan.grade && (
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className={gradeColors[scan.grade]}
                     >
                       {scan.grade}

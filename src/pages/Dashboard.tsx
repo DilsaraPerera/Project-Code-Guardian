@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
   const { data: scans, isLoading } = useScans(20);
-  
+
   // Get the most recent completed scan for stats
   const latestScan = scans?.find(s => s.status === 'completed');
   const hasScans = scans && scans.length > 0;
@@ -24,8 +24,8 @@ export default function Dashboard() {
     timestamp: scan.createdAt,
     status: scan.status,
     grade: scan.status === 'completed' ? scan.overallRiskGrade : undefined,
-    vulnerabilities: scan.criticalVulnerabilities + scan.highVulnerabilities + 
-                     scan.mediumVulnerabilities + scan.lowVulnerabilities,
+    vulnerabilities: scan.criticalVulnerabilities + scan.highVulnerabilities +
+      scan.mediumVulnerabilities + scan.lowVulnerabilities,
   })) || [];
 
   if (isLoading) {
@@ -59,8 +59,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-primary">Security Dashboard</h1>
-          <p className="text-sm text-primary/70">
+          <h1 className="text-2xl font-bold text-fancy">Security Dashboard</h1>
+          <p className="text-sm text-fancy/70">
             Monitor your supply chain security posture
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function Dashboard() {
             No scans yet
           </h2>
           <p className="text-center text-muted-foreground mb-6 max-w-md">
-            Start by scanning your first project to analyze dependencies, 
+            Start by scanning your first project to analyze dependencies,
             detect vulnerabilities, and identify weak-link signals.
           </p>
           <Link to="/scan">

@@ -5,10 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Settings as SettingsIcon, 
-  Key, 
-  Shield, 
+import {
+  Settings as SettingsIcon,
+  Key,
+  Shield,
   Bell,
   Database,
   Code,
@@ -43,13 +43,13 @@ export default function Settings() {
             {/* Free APIs */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-primary">Free Data Sources</h3>
-              
+
               {[
                 { name: "OSV Database", desc: "Open Source Vulnerabilities" },
                 { name: "GitHub Advisory Database", desc: "GitHub security advisories" },
                 { name: "npm Registry", desc: "Package metadata" },
               ].map((src) => (
-                <div key={src.name} className="flex items-center justify-between rounded-lg border border-border/50 bg-background/50 p-4">
+                <div key={src.name} className="flex items-center justify-between rounded-lg border border-border/50 p-4">
                   <div className="flex items-center gap-3">
                     <Database className="h-5 w-5 text-primary" />
                     <div>
@@ -70,7 +70,7 @@ export default function Settings() {
             {/* Premium APIs */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-primary">Premium Data Sources (Optional)</h3>
-              
+
               <div className="rounded-lg border border-border/50 bg-background/50 p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -86,9 +86,9 @@ export default function Settings() {
                   </Badge>
                 </div>
                 <div className="flex gap-2">
-                  <Input 
-                    type="password" 
-                    placeholder="Enter Snyk API key" 
+                  <Input
+                    type="password"
+                    placeholder="Enter Snyk API key"
                     className="flex-1 bg-background"
                   />
                   <Button>Connect</Button>
@@ -132,9 +132,9 @@ export default function Settings() {
 
             <div className="space-y-2">
               <Label className="text-primary">Inactivity Threshold (months)</Label>
-              <Input 
-                type="number" 
-                defaultValue="12" 
+              <Input
+                type="number"
+                defaultValue="12"
                 className="w-32 bg-background"
               />
               <p className="text-sm text-primary/60">
@@ -161,7 +161,7 @@ export default function Settings() {
                 Use our API to integrate security scanning into your CI/CD pipeline:
               </p>
               <pre className="bg-background rounded-lg p-4 overflow-x-auto text-sm font-mono text-primary/60">
-{`POST /api/scan
+                {`POST /api/scan
 Content-Type: application/json
 
 {

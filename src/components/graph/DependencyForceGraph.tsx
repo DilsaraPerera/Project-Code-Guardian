@@ -69,7 +69,7 @@ export function DependencyForceGraph({ data, width, height, onNodeClick }: Props
     ctx.stroke();
 
     // Label
-    const fontSize = isRoot ? 14 / globalScale : Math.max(10 / globalScale, 3);
+    const fontSize = isRoot ? (14 * 1.05) / globalScale : Math.max((10 * 1.05) / globalScale, 3 * 1.05);
     if (globalScale > 0.5 || isRoot || isHovered) {
       ctx.font = `${isRoot ? 'bold ' : ''}${fontSize}px sans-serif`;
       ctx.textAlign = 'center';

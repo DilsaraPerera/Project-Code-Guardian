@@ -1,10 +1,10 @@
-import { 
-  Shield, 
-  Scan, 
-  Package, 
-  AlertTriangle, 
-  FileText, 
-  Settings, 
+import {
+  Shield,
+  Scan,
+  Package,
+  AlertTriangle,
+  FileText,
+  Settings,
   History,
   BarChart3,
   Network
@@ -76,19 +76,19 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border/50">
       <SidebarHeader className="border-b border-border/50 px-4 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 glow-primary">
-            <Shield className="h-6 w-6 text-primary" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-scan/10 glow-scan">
+            <Shield className="h-6 w-6 text-scan" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-primary">CODE GUARDIAN</h1>
-            <p className="text-xs text-muted-foreground">Supply Chain Security</p>
+            <h1 className="text-lg font-bold text-foreground">CODE GUARDIAN</h1>
+            <p className="text-xs text-primary/70">Scan Your Code Here !!</p>
           </div>
         </div>
       </SidebarHeader>
-      
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground/70">
+          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-primary/70">
             Analysis
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -98,7 +98,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={location.pathname === item.href}
-                    className="transition-all hover:bg-primary/10"
+                    className="transition-all hover:bg-scan"
                   >
                     <NavLink to={item.href}>
                       <item.icon className="h-4 w-4" />
@@ -112,7 +112,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground/70">
+          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-primary/70">
             Management
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -122,7 +122,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={location.pathname === item.href}
-                    className="transition-all hover:bg-primary/10"
+                    className="transition-all hover:bg-scan"
                   >
                     <NavLink to={item.href}>
                       <item.icon className="h-4 w-4" />
@@ -137,7 +137,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border/50 p-4">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs text-primary/70">
           <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
           <span>All systems operational</span>
         </div>
