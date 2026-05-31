@@ -69,9 +69,9 @@ export function RecentScans({ scans }: RecentScansProps) {
             {scans.map((scan) => (
               <div
                 key={scan.id}
-                className="flex items-center justify-between rounded-lg border border-border/50 bg-background/50 p-3 transition-all hover:border-primary/30 hover:bg-secondary/10"
+                className="flex flex-col gap-3 rounded-lg border border-border/50 bg-background/50 p-3 transition-all hover:border-primary/30 hover:bg-secondary/10 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   {scan.status === 'completed' && (
                     <CheckCircle className="h-4 w-4 text-success" />
                   )}
@@ -81,8 +81,8 @@ export function RecentScans({ scans }: RecentScansProps) {
                   {(scan.status === 'scanning' || scan.status === 'pending') && (
                     <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   )}
-                  <div>
-                    <p className="text-sm font-medium text-primary">
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-medium text-primary">
                       {scan.projectName}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -90,7 +90,7 @@ export function RecentScans({ scans }: RecentScansProps) {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                   {scan.status === 'completed' && scan.grade && (
                     <Badge
                       variant="outline"

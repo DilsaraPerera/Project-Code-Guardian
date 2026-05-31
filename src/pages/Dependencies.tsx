@@ -72,7 +72,7 @@ export default function Dependencies() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div className="min-w-0">
         <h1 className="text-2xl font-bold text-primary">Dependencies</h1>
         <p className="text-sm text-primary/70">
           View and analyze all project dependencies
@@ -80,7 +80,7 @@ export default function Dependencies() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="bg-gradient-card border-border/50">
           <CardContent className="pt-4">
             <div className="flex items-center gap-3">
@@ -144,21 +144,21 @@ export default function Dependencies() {
       {/* Table */}
       <Card className="bg-gradient-card border-border/50">
         <CardHeader className="pb-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <CardTitle className="text-lg font-medium text-primary">Package List</CardTitle>
-            <div className="flex gap-2">
-              <div className="relative">
+            <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+              <div className="relative w-full sm:max-w-xs lg:w-64">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/50" />
                 <Input
                   placeholder="Search packages..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 pl-9 bg-background/50"
+                  className="w-full bg-background/50 pl-9"
                 />
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="w-full justify-between gap-2 sm:w-auto">
                     <Filter className="h-4 w-4" />
                     {filterLabels[filter]}
                     <ChevronDown className="h-4 w-4" />
@@ -180,7 +180,7 @@ export default function Dependencies() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table className="min-w-full">
             <TableHeader>
               <TableRow>
                 <TableHead className="text-primary/80">Package</TableHead>
@@ -196,9 +196,9 @@ export default function Dependencies() {
               {filteredDependencies.map((dep) => (
                 <TableRow key={dep.name} className="hover:bg-background/50">
                   <TableCell className="font-medium text-primary">
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
                       <Package className="h-4 w-4 text-primary/50" />
-                      {dep.name}
+                      <span className="break-all">{dep.name}</span>
                     </div>
                   </TableCell>
                   <TableCell className="font-mono text-sm text-primary/60">

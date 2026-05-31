@@ -21,6 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const navigationItems = [
@@ -71,16 +72,21 @@ const secondaryItems = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const closeMobileSidebar = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   return (
     <Sidebar className="border-r border-border/50">
       <SidebarHeader className="border-b border-border/50 px-4 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-scan/10 glow-scan">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-scan/10 glow-scan">
             <Shield className="h-6 w-6 text-scan" />
           </div>
-          <div>
-            <h1 className="text-lg font-bold text-foreground">CODE GUARDIAN</h1>
+          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
+            <h1 className="truncate text-lg font-bold text-foreground">CODE GUARDIAN</h1>
             <p className="text-xs text-primary/70">Scan Your Code Here !!</p>
           </div>
         </div>
@@ -100,7 +106,7 @@ export function AppSidebar() {
                     isActive={location.pathname === item.href}
                     className="transition-all hover:bg-scan"
                   >
-                    <NavLink to={item.href}>
+                    <NavLink to={item.href} onClick={closeMobileSidebar}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </NavLink>
@@ -124,7 +130,7 @@ export function AppSidebar() {
                     isActive={location.pathname === item.href}
                     className="transition-all hover:bg-scan"
                   >
-                    <NavLink to={item.href}>
+                    <NavLink to={item.href} onClick={closeMobileSidebar}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </NavLink>
@@ -137,9 +143,9 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border/50 p-4">
-        <div className="flex items-center gap-2 text-xs text-primary/70">
+        <div className="flex items-center gap-2 text-xs text-primary/70 group-data-[collapsible=icon]:justify-center">
           <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-          <span>All systems operational</span>
+          <span className="group-data-[collapsible=icon]:hidden">All systems operational</span>
         </div>
       </SidebarFooter>
     </Sidebar>

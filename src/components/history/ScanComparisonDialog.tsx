@@ -48,11 +48,13 @@ export function ScanComparisonDialog({ open, onOpenChange, scanA, scanB }: ScanC
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Scan Comparison</DialogTitle>
         </DialogHeader>
 
+        <div className="overflow-x-auto">
+          <div className="min-w-[460px]">
         {/* Column headers */}
         <div className="grid grid-cols-[1fr_1fr_auto_1fr] gap-2 text-xs font-medium text-muted-foreground border-b border-border/50 pb-2">
           <span>Metric</span>
@@ -97,6 +99,8 @@ export function ScanComparisonDialog({ open, onOpenChange, scanA, scanB }: ScanC
               )}
             </div>
           ))}
+        </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

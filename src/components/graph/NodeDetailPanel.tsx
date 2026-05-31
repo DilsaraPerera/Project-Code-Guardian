@@ -21,7 +21,7 @@ export function NodeDetailPanel({ node, onClose }: Props) {
   const config = severityConfig[node.riskLevel] || severityConfig.info;
 
   return (
-    <Card className="bg-gradient-card border-border/50 w-80">
+    <Card className="w-full max-w-sm border-border/50 bg-gradient-card sm:w-80">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -49,7 +49,7 @@ export function NodeDetailPanel({ node, onClose }: Props) {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="md:grid grid-cols-1 gap-2 md:grid-cols-2">
           <div className="rounded-md bg-background/50 p-2">
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Shield className="h-3 w-3" />

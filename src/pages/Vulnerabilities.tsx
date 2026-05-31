@@ -140,13 +140,13 @@ export default function Vulnerabilities() {
   if (!scansLoading && completedScans.length === 0) {
     return (
       <div className="space-y-6">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-primary">Vulnerabilities</h1>
           <p className="text-sm text-primary/70">
             Security vulnerabilities detected in your dependencies
           </p>
         </div>
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-4 py-14 sm:py-20">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
             <Shield className="h-8 w-8 text-primary" />
           </div>
@@ -156,8 +156,8 @@ export default function Vulnerabilities() {
           <p className="text-center text-primary/60 mb-6 max-w-md">
             Run a scan to detect vulnerabilities in your project dependencies.
           </p>
-          <Link to="/scan">
-            <Button className="glow-primary gap-2">
+          <Link to="/scan" className="w-full sm:w-auto">
+            <Button className="w-full gap-2 glow-primary sm:w-auto">
               <Scan className="h-4 w-4" />
               Start a Scan
             </Button>
@@ -171,7 +171,7 @@ export default function Vulnerabilities() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-primary">Vulnerabilities</h1>
           <p className="text-sm text-primary/70">
             Security vulnerabilities detected in your dependencies
@@ -179,7 +179,7 @@ export default function Vulnerabilities() {
         </div>
         {completedScans.length > 0 && (
           <Select value={selectedScanId} onValueChange={setSelectedScanId}>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full sm:w-[220px]">
               <SelectValue placeholder="Select scan" />
             </SelectTrigger>
             <SelectContent>
@@ -195,13 +195,13 @@ export default function Vulnerabilities() {
 
       {/* Summary cards */}
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-20" />
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {(
             Object.entries(counts) as [SeverityLevel, number][]
           ).map(([severity, count]) => {
@@ -243,25 +243,25 @@ export default function Vulnerabilities() {
       {/* Filters and list */}
       <Card className="bg-gradient-card border-border/50">
         <CardHeader className="pb-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <CardTitle className="text-lg font-medium text-primary">
               {isLoading
                 ? "Loading…"
                 : `${filteredVulnerabilities.length} Vulnerabilities Found`}
             </CardTitle>
-            <div className="flex gap-2">
-              <div className="relative">
+            <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+              <div className="relative w-full sm:max-w-xs lg:w-64">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/50" />
                 <Input
                   placeholder="Search by CVE, package, title…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 pl-9 bg-background/50"
+                  className="w-full bg-background/50 pl-9"
                 />
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="w-full justify-between gap-2 sm:w-auto">
                     <Filter className="h-4 w-4" />
                     {severityFilter === "all"
                       ? "All Severities"
@@ -323,14 +323,14 @@ export default function Vulnerabilities() {
                   <div
                     className={`rounded-lg border ${config.borderColor} ${config.bgColor} transition-all`}
                   >
-                    <CollapsibleTrigger className="flex w-full items-center justify-between p-4 text-left">
-                      <div className="flex items-center gap-4 min-w-0">
+                    <CollapsibleTrigger className="flex w-full flex-col items-start justify-between gap-3 p-4 text-left sm:flex-row sm:items-center">
+                      <div className="flex w-full min-w-0 items-start gap-3 sm:items-center sm:gap-4">
                         <Icon
                           className={`h-5 w-5 shrink-0 ${config.color}`}
                         />
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium text-primary truncate">
+                            <span className="min-w-0 break-words font-medium text-primary">
                               {vuln.title}
                             </span>
                             <Badge
@@ -359,7 +359,7 @@ export default function Vulnerabilities() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0 ml-2">
+                      <div className="ml-0 flex w-full shrink-0 items-center justify-between gap-2 sm:ml-2 sm:w-auto sm:justify-end">
                         <Badge
                           variant="outline"
                           className={`${config.bgColor} ${config.color} ${config.borderColor}`}

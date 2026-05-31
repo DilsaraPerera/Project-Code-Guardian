@@ -91,11 +91,11 @@ export default function History() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-primary">Scan History</h1>
           <p className="text-sm text-primary/70">View results and compare scans side-by-side</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
           {selected.length === 2 && (
             <Button variant="outline" size="sm" className="gap-2" onClick={() => setCompareOpen(true)}>
               <GitCompareArrows className="h-4 w-4" />
@@ -140,7 +140,7 @@ export default function History() {
                   isSelected ? "border-primary/50 ring-1 ring-primary/20" : "border-border/50"
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-start gap-3 sm:items-center">
                   {isCompleted && (
                     <Checkbox
                       checked={isSelected}
@@ -153,9 +153,9 @@ export default function History() {
                   {(scan.status === "pending" || scan.status === "scanning") && (
                     <Loader2 className="h-4 w-4 text-primary animate-spin shrink-0" />
                   )}
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-primary">{scan.projectName}</span>
+                      <span className="break-words font-medium text-primary">{scan.projectName}</span>
                       {isCompleted && (
                         <Badge variant="outline" className={gradeColors[scan.overallRiskGrade]}>
                           Grade {scan.overallRiskGrade}
@@ -171,7 +171,7 @@ export default function History() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-sm flex-wrap">
+                <div className="flex w-full flex-wrap items-center gap-3 text-sm sm:w-auto sm:justify-end">
                   {isCompleted && (
                     <>
                       <div><span className="text-primary/60">Deps: </span><span className="font-medium text-primary">{scan.totalDependencies}</span></div>

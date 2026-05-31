@@ -42,7 +42,7 @@ export default function ScanDetail() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-48" />
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-24" />
           ))}
@@ -80,15 +80,15 @@ export default function ScanDetail() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-start gap-3">
           <Link to="/history">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-primary">{scan.project_name}</h1>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="break-words text-2xl font-bold text-primary">{scan.project_name}</h1>
               <Badge variant="outline" className={gradeColors[scan.overall_risk_grade]}>
                 Grade {scan.overall_risk_grade}
               </Badge>
@@ -102,7 +102,7 @@ export default function ScanDetail() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Risk Score", value: Math.round(100 - Number(scan.overall_risk_score)), icon: Shield, iconColor: "text-primary", bg: "bg-primary/10" },
           { label: "Vulnerabilities", value: totalVulns, icon: AlertTriangle, iconColor: "text-severity-high", bg: "bg-severity-high/10" },
@@ -131,7 +131,7 @@ export default function ScanDetail() {
           <CardTitle className="text-lg text-primary">Vulnerability Breakdown</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             {[
               { label: "Critical", count: scan.critical_vulnerabilities, icon: ShieldAlert, color: "text-severity-critical", bg: "bg-severity-critical/10" },
               { label: "High", count: scan.high_vulnerabilities, icon: AlertTriangle, color: "text-severity-high", bg: "bg-severity-high/10" },
@@ -163,16 +163,16 @@ export default function ScanDetail() {
               {topRiskDeps.map((dep: any) => (
                 <div
                   key={dep.id}
-                  className="flex items-center justify-between rounded-lg border border-border/50 bg-background/50 px-4 py-3"
+                  className="flex flex-col gap-3 rounded-lg border border-border/50 bg-background/50 px-4 py-3 lg:flex-row lg:items-center lg:justify-between"
                 >
-                  <div className="flex items-center gap-3">
-                    <Package className="h-4 w-4 text-primary/50" />
-                    <div>
-                      <span className="font-medium text-primary">{dep.name}</span>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Package className="h-4 w-4 shrink-0 text-primary/50" />
+                    <div className="min-w-0">
+                      <span className="break-all font-medium text-primary">{dep.name}</span>
                       <span className="ml-2 text-xs text-primary/60">v{dep.version}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <span className={`text-sm font-medium ${riskLevelColors[dep.risk_level] || "text-primary/50"}`}>
                       {dep.risk_level}
                     </span>

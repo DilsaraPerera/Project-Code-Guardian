@@ -111,16 +111,16 @@ export default function Scan() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div className="min-w-0">
         <h1 className="text-2xl font-bold text-primary">New Security Scan</h1>
         <p className="text-sm text-primary/70">
           Analyze your project dependencies for vulnerabilities and weak-link signals
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 xl:grid-cols-3">
         {/* Input section */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="space-y-4 xl:col-span-2">
           <Card className="bg-gradient-card border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
@@ -133,8 +133,8 @@ export default function Scan() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* File upload */}
-              <div className="flex items-center gap-4">
-                <label className="flex-1">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <label className="w-full flex-1">
                   <input
                     type="file"
                     accept=".json"
@@ -149,7 +149,7 @@ export default function Scan() {
                     </span>
                   </div>
                 </label>
-                <label className="flex-1">
+                <label className="w-full flex-1">
                   <input
                     type="file"
                     accept=".json"
@@ -167,8 +167,8 @@ export default function Scan() {
               </div>
 
               {lockfileContent && (
-                <div className="flex items-center gap-2 rounded-lg bg-primary/10 p-2 text-sm text-primary">
-                  <CheckCircle className="h-4 w-4" />
+                <div className="flex items-start gap-2 rounded-lg bg-primary/10 p-2 text-sm text-primary">
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   Lockfile attached - transitive dependencies will be analyzed
                 </div>
               )}
@@ -191,21 +191,21 @@ export default function Scan() {
 }`}
                 value={packageJsonContent}
                 onChange={(e) => handleContentChange(e.target.value)}
-                className="min-h-[300px] font-mono text-sm bg-background/50"
+                className="min-h-[240px] bg-background/50 font-mono text-sm sm:min-h-[300px]"
                 disabled={isScanning}
               />
 
               {/* Validation feedback */}
               {parseError && (
-                <div className="flex items-center gap-2 rounded-lg bg-danger/10 p-3 text-sm text-danger">
-                  <AlertCircle className="h-4 w-4" />
+                <div className="flex items-start gap-2 rounded-lg bg-danger/10 p-3 text-sm text-danger">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   {parseError}
                 </div>
               )}
 
               {counts && !parseError && (
-                <div className="flex items-center gap-2 rounded-lg bg-success/10 p-3 text-sm text-success">
-                  <CheckCircle className="h-4 w-4" />
+                <div className="flex items-start gap-2 rounded-lg bg-success/10 p-3 text-sm text-success">
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   Valid package.json detected
                 </div>
               )}
@@ -217,7 +217,7 @@ export default function Scan() {
             <Card className="bg-gradient-card border-primary/30">
               <CardContent className="pt-6">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between gap-4 text-sm">
                     <span className="text-primary/70">{scanProgress.message}</span>
                     <span className="font-mono text-primary">{scanProgress.progress}%</span>
                   </div>
@@ -231,8 +231,8 @@ export default function Scan() {
           {scanProgress.status === 'failed' && (
             <Card className="bg-danger/10 border-danger/30">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-2 text-danger">
-                  <AlertCircle className="h-5 w-5" />
+                <div className="flex items-start gap-2 text-danger">
+                  <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
                   <span>{scanProgress.message}</span>
                 </div>
                 <Button variant="outline" className="mt-4" onClick={resetScan}>

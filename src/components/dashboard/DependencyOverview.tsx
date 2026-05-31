@@ -26,7 +26,7 @@ export function DependencyOverview({ total, direct, transitive, withIssues }: De
             <span className="text-sm text-primary/80">packages</span>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="md:grid gap-4 md:grid-cols-3">
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Package className="h-3 w-3" />

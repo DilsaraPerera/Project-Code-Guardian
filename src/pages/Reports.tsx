@@ -71,7 +71,7 @@ export default function Reports() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="min-w-0">
         <h1 className="text-2xl font-bold text-primary">Reports & SBOM</h1>
         <p className="text-sm text-primary/70">
           Generate security reports and Software Bill of Materials
@@ -102,7 +102,7 @@ export default function Reports() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-2">
         {/* SBOM Export */}
         <Card className="bg-gradient-card border-border/50">
           <CardHeader>
@@ -121,15 +121,15 @@ export default function Reports() {
                 { key: 'spdx' as const, label: 'SPDX', desc: 'Linux Foundation format', icon: FileCode },
                 { key: 'json' as const, label: 'JSON', desc: 'Raw data export', icon: FileJson },
               ].map(item => (
-                <div key={item.key} className="flex items-center justify-between rounded-lg border border-border/50 bg-background/50 p-4">
-                  <div className="flex items-center gap-3">
-                    <item.icon className="h-8 w-8 text-primary" />
-                    <div>
+                <div key={item.key} className="flex flex-col gap-3 rounded-lg border border-border/50 bg-background/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <item.icon className="h-8 w-8 shrink-0 text-primary" />
+                    <div className="min-w-0">
                       <p className="font-medium text-primary">{item.label}</p>
                       <p className="text-sm text-primary/60">{item.desc}</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" disabled={!hasScan} onClick={() => handleExport(item.key)}>
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto" disabled={!hasScan} onClick={() => handleExport(item.key)}>
                     {generating === item.key ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Download className="mr-1 h-4 w-4" />}
                     Export
                   </Button>
@@ -157,15 +157,15 @@ export default function Reports() {
                 { key: 'full' as const, label: 'Full Security Report', desc: 'Detailed vulnerability analysis' },
                 { key: 'remediation' as const, label: 'Remediation Guide', desc: 'Step-by-step fix instructions' },
               ].map(item => (
-                <div key={item.key} className="flex items-center justify-between rounded-lg border border-border/50 bg-background/50 p-4">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-8 w-8 text-primary" />
-                    <div>
+                <div key={item.key} className="flex flex-col gap-3 rounded-lg border border-border/50 bg-background/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <FileText className="h-8 w-8 shrink-0 text-primary" />
+                    <div className="min-w-0">
                       <p className="font-medium text-primary">{item.label}</p>
                       <p className="text-sm text-primary/60">{item.desc}</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" disabled={!hasScan} onClick={() => handleReport(item.key)}>
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto" disabled={!hasScan} onClick={() => handleReport(item.key)}>
                     {generating === item.key ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Download className="mr-1 h-4 w-4" />}
                     PDF
                   </Button>

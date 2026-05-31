@@ -32,16 +32,16 @@ export default function Dashboard() {
     return (
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+          <div className="min-w-0">
             <h1 className="text-2xl font-bold text-primary">Security Dashboard</h1>
             <p className="text-sm text-primary/70">
               Monitor your supply chain security posture
             </p>
           </div>
         </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
-            <div className="grid gap-6 sm:grid-cols-2">
+        <div className="md:grid gap-6 xl:grid-cols-3">
+          <div className="space-y-6 xl:col-span-2">
+            <div className="md:grid gap-6 sm:grid-cols-2">
               <Skeleton className="h-48" />
               <Skeleton className="h-48" />
             </div>
@@ -58,14 +58,14 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-fancy">Security Dashboard</h1>
           <p className="text-sm text-fancy/70">
             Monitor your supply chain security posture
           </p>
         </div>
-        <Link to="/scan">
-          <Button className="glow-primary gap-2">
+        <Link to="/scan" className="w-full sm:w-auto">
+          <Button className="w-full gap-2 glow-primary sm:w-auto">
             <Scan className="h-4 w-4" />
             New Scan
           </Button>
@@ -74,7 +74,7 @@ export default function Dashboard() {
 
       {!hasScans ? (
         /* Empty state */
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-4 py-14 sm:py-20">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
             <Shield className="h-8 w-8 text-primary" />
           </div>
@@ -85,8 +85,8 @@ export default function Dashboard() {
             Start by scanning your first project to analyze dependencies,
             detect vulnerabilities, and identify weak-link signals.
           </p>
-          <Link to="/scan">
-            <Button className="glow-primary gap-2">
+          <Link to="/scan" className="w-full sm:w-auto">
+            <Button className="w-full gap-2 glow-primary sm:w-auto">
               <Scan className="h-4 w-4" />
               Start Your First Scan
             </Button>
@@ -94,11 +94,11 @@ export default function Dashboard() {
         </div>
       ) : (
         /* Dashboard with data */
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="md:grid gap-6 xl:grid-cols-3">
           {/* Left column - Main stats */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="space-y-6 xl:col-span-2">
             {/* Top row - Score and Vulnerabilities */}
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="md:grid gap-6 sm:grid-cols-2">
               <SecurityScoreCard
                 grade={latestScan?.overallRiskGrade || 'A'}
                 score={Math.round(100 - (latestScan?.overallRiskScore || 0))}
@@ -134,7 +134,7 @@ export default function Dashboard() {
           </div>
 
           {/* Right column - Recent scans */}
-          <div className="lg:col-span-1">
+          <div className="xl:col-span-1">
             <RecentScans scans={recentScans} />
           </div>
         </div>

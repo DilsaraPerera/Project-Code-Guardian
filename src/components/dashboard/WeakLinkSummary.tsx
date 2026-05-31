@@ -76,7 +76,7 @@ export function WeakLinkSummary({
   return (
     <Card className="bg-gradient-card border-border/50">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center justify-between text-sm font-medium text-muted-foreground">
+        <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-sm font-medium text-muted-foreground">
           <span className="flex items-center gap-2 text-primary/80">
             <Link2Off className="h-4 w-4" />
             Weak-Link Signals
@@ -91,20 +91,20 @@ export function WeakLinkSummary({
           {signals.map((signal) => (
             <div
               key={signal.label}
-              className="flex items-center justify-between rounded-lg border border-border/50 bg-background/30 p-2.5 transition-all hover:bg-background/50"
+              className="flex items-center justify-between gap-3 rounded-lg border border-border/50 bg-background/30 p-2.5 transition-all hover:bg-background/50"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className={`rounded-md p-1.5 ${severityColors[signal.severity]}`}>
                   <signal.icon className="h-3.5 w-3.5" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-medium text-primary">{signal.label}</p>
                   <p className="text-xs text-muted-foreground">{signal.description}</p>
                 </div>
               </div>
               <Badge 
                 variant="outline" 
-                className={signal.count > 0 ? severityColors[signal.severity] : "text-muted-foreground"}
+                className={signal.count > 0 ? `${severityColors[signal.severity]} shrink-0` : "shrink-0 text-muted-foreground"}
               >
                 {signal.count}
               </Badge>

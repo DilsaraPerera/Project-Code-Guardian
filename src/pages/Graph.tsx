@@ -56,16 +56,16 @@ export default function Graph() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-primary">Dependency Graph</h1>
           <p className="text-sm text-primary/70">
             Visualize your project's dependency tree with vulnerability propagation
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center gap-2 sm:w-auto">
           {completedScans.length > 0 && (
             <Select value={selectedScanId} onValueChange={setSelectedScanId}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[220px]">
                 <SelectValue placeholder="Select scan" />
               </SelectTrigger>
               <SelectContent>
@@ -83,12 +83,12 @@ export default function Graph() {
       {/* Graph area */}
       <Card className="bg-gradient-card border-border/50 relative">
         <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <CardTitle className="flex items-center gap-2 text-lg font-medium text-primary">
               <Network className="h-5 w-5 text-primary" />
               Dependency Tree
             </CardTitle>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-success" />
                 <span className="text-xs text-primary/60">Healthy</span>
@@ -111,7 +111,7 @@ export default function Graph() {
         <CardContent className="relative">
           <div
             ref={containerRef}
-            className="h-[500px] rounded-lg border border-border bg-background/30 overflow-hidden"
+            className="h-[360px] overflow-hidden rounded-lg border border-border bg-background/30 sm:h-[460px] xl:h-[560px] 2xl:h-[640px]"
           >
             {scansLoading || graphLoading ? (
               <div className="flex h-full items-center justify-center">
@@ -129,7 +129,7 @@ export default function Graph() {
               />
             ) : (
               <div className="flex h-full items-center justify-center">
-                <div className="text-center">
+                <div className="px-4 text-center">
                   <Network className="mx-auto h-16 w-16 text-primary/30 mb-4" />
                   <p className="text-primary/70 mb-2">No dependency data to visualize</p>
                   <p className="text-sm text-primary/50 max-w-md">
@@ -146,7 +146,7 @@ export default function Graph() {
           </div>
 
           {selectedNode && (
-            <div className="absolute top-4 right-4 z-10">
+            <div className="absolute inset-x-3 top-3 z-10 sm:inset-x-auto sm:right-4 sm:top-4">
               <NodeDetailPanel
                 node={selectedNode}
                 onClose={() => setSelectedNode(null)}
@@ -157,7 +157,7 @@ export default function Graph() {
       </Card>
 
       {/* Stats panel */}
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Total Nodes", value: hasData ? graphData.stats.totalNodes : '--' },
           { label: "Max Depth", value: hasData ? graphData.stats.maxDepth : '--' },

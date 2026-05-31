@@ -175,13 +175,41 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    min-width: 0;
+    overflow-x: hidden;
   }
 
   /* Force dark mode for security tool aesthetic */
   html {
     @apply dark;
-    /* Scale root font-size by 5% so rem-based Tailwind utilities grow uniformly */
-    font-size: 105%;
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  #root {
+    min-height: 100svh;
+    width: 100%;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  span,
+  a,
+  code,
+  pre {
+    overflow-wrap: anywhere;
   }
 }
 

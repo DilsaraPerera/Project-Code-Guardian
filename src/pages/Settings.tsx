@@ -20,7 +20,7 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div className="min-w-0">
         <h1 className="text-2xl font-bold text-primary">Settings</h1>
         <p className="text-sm text-primary/70">
           Configure scanner settings and integrations
@@ -49,10 +49,10 @@ export default function Settings() {
                 { name: "GitHub Advisory Database", desc: "GitHub security advisories" },
                 { name: "npm Registry", desc: "Package metadata" },
               ].map((src) => (
-                <div key={src.name} className="flex items-center justify-between rounded-lg border border-border/50 p-4">
-                  <div className="flex items-center gap-3">
-                    <Database className="h-5 w-5 text-primary" />
-                    <div>
+                <div key={src.name} className="flex flex-col gap-3 rounded-lg border border-border/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Database className="h-5 w-5 shrink-0 text-primary" />
+                    <div className="min-w-0">
                       <p className="font-medium text-primary">{src.name}</p>
                       <p className="text-sm text-primary/60">{src.desc}</p>
                     </div>
@@ -72,10 +72,10 @@ export default function Settings() {
               <h3 className="text-sm font-medium text-primary">Premium Data Sources (Optional)</h3>
 
               <div className="rounded-lg border border-border/50 bg-background/50 p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Database className="h-5 w-5 text-primary/50" />
-                    <div>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Database className="h-5 w-5 shrink-0 text-primary/50" />
+                    <div className="min-w-0">
                       <p className="font-medium text-primary">Snyk Vulnerability Database</p>
                       <p className="text-sm text-primary/60">Enhanced vulnerability data</p>
                     </div>
@@ -85,13 +85,13 @@ export default function Settings() {
                     Not Connected
                   </Badge>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <Input
                     type="password"
                     placeholder="Enter Snyk API key"
                     className="flex-1 bg-background"
                   />
-                  <Button>Connect</Button>
+                  <Button className="w-full sm:w-auto">Connect</Button>
                 </div>
               </div>
             </div>
@@ -118,12 +118,12 @@ export default function Settings() {
             ].map((item, i) => (
               <div key={item.label}>
                 {i > 0 && <Separator className="mb-6" />}
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between gap-4">
                   <div className="space-y-0.5">
                     <Label className="text-primary">{item.label}</Label>
                     <p className="text-sm text-primary/60">{item.desc}</p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch className="shrink-0" defaultChecked />
                 </div>
               </div>
             ))}

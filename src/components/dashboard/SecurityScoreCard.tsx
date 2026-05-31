@@ -27,7 +27,7 @@ const gradeGlow = {
 
 export function SecurityScoreCard({ grade, score, label = "Security Score" }: SecurityScoreCardProps) {
   return (
-    <Card className="bg-gradient-card border-border/50">
+    <Card className="bg-gradient-card border-border/50 max-md:my-8">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium text-primary/80">
           {label}
@@ -35,23 +35,23 @@ export function SecurityScoreCard({ grade, score, label = "Security Score" }: Se
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-4">
-          <div 
+          <div
             className={cn(
-              "flex h-16 w-16 items-center justify-center rounded-lg border-2 text-3xl font-bold transition-all",
+              "flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border-2 text-3xl font-bold transition-all",
               gradeColors[grade],
               gradeGlow[grade]
             )}
           >
             {grade}
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="text-2xl font-bold text-primary">{score}/100</div>
             <div className="text-sm text-primary/60">
-              {grade === '-' ? 'No scan data' : 
-               grade === 'A' ? 'Excellent' :
-               grade === 'B' ? 'Good' :
-               grade === 'C' ? 'Fair' :
-               grade === 'D' ? 'Poor' : 'Critical'}
+              {grade === '-' ? 'No scan data' :
+                grade === 'A' ? 'Excellent' :
+                  grade === 'B' ? 'Good' :
+                    grade === 'C' ? 'Fair' :
+                      grade === 'D' ? 'Poor' : 'Critical'}
             </div>
           </div>
         </div>
