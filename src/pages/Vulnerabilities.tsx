@@ -210,9 +210,8 @@ export default function Vulnerabilities() {
             return (
               <Card
                 key={severity}
-                className={`bg-gradient-card border-border/50 cursor-pointer transition-all hover:border-primary/30 ${
-                  severityFilter === severity ? "ring-1 ring-primary" : ""
-                }`}
+                className={`bg-gradient-card border-border/50 cursor-pointer transition-all hover:border-primary/30 ${severityFilter === severity ? "ring-1 ring-primary" : ""
+                  }`}
                 onClick={() =>
                   setSeverityFilter(
                     severityFilter === severity ? "all" : severity
@@ -497,8 +496,8 @@ export default function Vulnerabilities() {
                                   {ref.includes("github.com")
                                     ? "GitHub Advisory"
                                     : ref.includes("nvd.nist")
-                                    ? "NVD Detail"
-                                    : "View Reference"}
+                                      ? "NVD Detail"
+                                      : "View Reference"}
                                 </a>
                               </Button>
                             ))}

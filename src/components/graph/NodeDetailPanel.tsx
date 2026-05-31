@@ -77,10 +77,10 @@ export function NodeDetailPanel({ node, onClose }: Props) {
                   backgroundColor: severityConfig[node.riskLevel]?.className.includes('critical')
                     ? '#dc2626'
                     : severityConfig[node.riskLevel]?.className.includes('high')
-                    ? '#f97316'
-                    : severityConfig[node.riskLevel]?.className.includes('medium')
-                    ? '#eab308'
-                    : '#22c55e',
+                      ? '#f97316'
+                      : severityConfig[node.riskLevel]?.className.includes('medium')
+                        ? '#eab308'
+                        : '#22c55e',
                 }}
               />
             </div>
